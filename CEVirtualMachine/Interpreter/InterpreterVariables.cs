@@ -7,13 +7,8 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
-        static private bool GetVariableType(dynamic variable, out string type)
+        static private bool GetVariableTypeFromCSharp(dynamic variable, out string type)
         {
-            if(variable == null)
-            {
-                type = "NULL";
-                return true;
-            }
             switch (variable.GetType().ToString())
             {
                 case "System.Int32":
@@ -35,6 +30,38 @@ namespace CEVirtualMachine
                     type = "String";
                     break;
                 case "System.Boolean":
+                    type = "Boolean";
+                    break;
+                default:
+                    type = "Unknown";
+                    return false;
+            }
+            return true;
+        }
+
+        static private bool GetVariableTypeFromCEurope(string variable, out string type)
+        {
+            switch (variable)
+            {
+                case "ціле":
+                    type = "Int";
+                    break;
+                case "довгоціле":
+                    type = "Long";
+                    break;
+                case "плавати":
+                    type = "Float";
+                    break;
+                case "подвійний":
+                    type = "Double";
+                    break;
+                case "знак":
+                    type = "Char";
+                    break;
+                case "рядок":
+                    type = "String";
+                    break;
+                case "логічний":
                     type = "Boolean";
                     break;
                 default:
@@ -91,6 +118,19 @@ namespace CEVirtualMachine
             }
             type = BasicTypes.Unknown.ToString();
             return false;
+        }
+
+        static private bool CheckLiteralName(string Name)
+        {
+            if (!KeyWords.Contains(Name) && char.IsLetter(Name[0]))
+            {
+                for (var i = 1; i < Name.Length; i++)
+                    if (!char.IsLetterOrDigit(Name[0]))
+                        return false;
+            }
+            else
+                return false;
+            return true;
         }
     }
 }

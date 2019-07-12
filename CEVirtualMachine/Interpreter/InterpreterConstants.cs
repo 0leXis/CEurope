@@ -10,6 +10,7 @@ namespace CEVirtualMachine
         static readonly Dictionary<string, string> ErrorCodes = new Dictionary<string, string>()
         {
             ["BAD_NAMESPACE"] = "Неприпустиме оголошення простору імен",
+            ["BAD_LITERALNAME"] = "Введено неприпустиме ім'я",
             ["NO_NAMESPACE"] = "Простір імен відсутня",
             ["NO_PROGRAM"] = "Відсутня точка входу",
             ["DEFINED_PROGRAM"] = "Точка входу вже визначена в даному або іншому просторі імен",
@@ -20,7 +21,9 @@ namespace CEVirtualMachine
             ["BAD_EXPRESSION"] = "Неприпустиме вираз",
             ["BAD_OPERATOR"] = "Неприпустимий оператор",
             ["BAD_CAST"] = "Неприпустиме приведення типів в вираженні",
-            ["BAD_VARIABLE"] = "Неприпустиме значення змінної"
+            ["BAD_VARIABLE"] = "Неприпустиме значення змінної",
+            ["BADNAME_VARIABLE"] = "Змінної з таким ім'ям не існує",
+            ["BADINIT_VARIABLE"] = "Змінна, зазначена ключовим словом \"змінна\" не була инициализирована"
         };
 
         static readonly string[] KeyWords = new string[]
@@ -33,19 +36,30 @@ namespace CEVirtualMachine
             "громадськість", "закритий", "захищений"
         };
 
+        static readonly string[] DataDefs = new string[]
+        {
+            "змінна",
+            "ціле",
+            "довгоціле",
+            "плавати",
+            "подвійний",
+            "рядок",
+            "знак"
+        };
+
         static readonly char[] IgnoreCharacters = new char[] { ' ', '\t', '\n', '\r', '\v' };
         static readonly string BlockBegin = "почати";
         static readonly string BlockEnd = "кінець";
 
         static readonly string[] operators = new string[]
         {
-            "++", "--", "-", "+", "!", "*", @"\", "%", "<<", ">>", ">", "<", ">=",
+            "++", "--", "-", "+", "!", "*", "/", "%", "<<", ">>", ">", "<", ">=",
             "<=", "==", "!=", "&", "^", "|", "&&", "||"
         };
 
         static readonly char[] operator_tokens = new char[]
         {
-            '+', '-', '!', '*', '\\', '%', '<', '>', '=', '&', '^', '|'
+            '+', '-', '!', '*', '/', '%', '<', '>', '=', '&', '^', '|'
         };
 
         private const int MIN_PRIORITY = 100;

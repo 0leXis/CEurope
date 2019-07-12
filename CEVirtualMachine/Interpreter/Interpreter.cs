@@ -69,7 +69,7 @@ namespace CEVirtualMachine
                                     return false;
                                 }
                             case "кінець":
-                                Result = EndBlock(command_ptr, ref NameSpaceDefined, ref ProgramDefined);
+                                Result = EndBlock(ref NameSpaceDefined, ref ProgramDefined);
                                 if (Result == null)
                                 {
                                     continue;
@@ -91,7 +91,7 @@ namespace CEVirtualMachine
                                 BeginBlock(command_ptr);
                                 continue;
                             case "кінець":
-                                var Result = EndBlock(command_ptr, ref NameSpaceDefined, ref ProgramDefined);
+                                var Result = EndBlock(ref NameSpaceDefined, ref ProgramDefined);
                                 if (Result == null)
                                 {
                                     continue;
@@ -122,6 +122,56 @@ namespace CEVirtualMachine
                                     return false;
                                 }
                             default:
+                                var indx = literal.IndexOf('(');
+                                if(DataDefs.Contains(literal))
+                                {
+                                    Result = DefineVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], literal);
+                                    if (Result == null)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                        return false;
+                                    }
+                                }
+                                else
+                                if (indx > 0 && char.IsLetter(literal[0]))
+                                {
+                                    //TODO: FunctionsDoHere
+                                }
+                                else
+                                if(CheckLiteralName(literal))
+                                {
+                                    Variable vrb = null;
+                                    var IsVarFinded = false;
+                                    foreach (var block in OpenedBlocks)
+                                    {
+                                        vrb = block.variables.Find((variable) => variable.Name == literal);
+                                        if (vrb != null)
+                                        {
+                                            IsVarFinded = true;
+                                            break;
+                                        }
+                                    }
+                                    if (IsVarFinded)
+                                    {
+                                        Result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb);
+                                        if (Result != null)
+                                        {
+                                            SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                            return false;
+                                        }
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        SendError(line_ptr, ErrorCodes["BADNAME_VARIABLE"], OutFile);
+                                        return false;
+                                    }
+                                }
+
                                 SendError(line_ptr, ErrorCodes["BAD_LITERAL"], OutFile);
                                 return false;
                         }

@@ -7,13 +7,13 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
-        static private char FindNextSymbol(string source, ref int NextIndex, ref int line_ptr)
+        static private char GetNextSymbol(string source, ref int NextIndex, ref int line_ptr)
         {
             for (var i = NextIndex; i < source.Length; i++)
             {
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
-                    NextIndex++;
+                    NextIndex = i + 1;
                     return source[i];
                 }
                 if (source[i] == '\n')
@@ -24,7 +24,6 @@ namespace CEVirtualMachine
 
         static private bool GetNextExpression(string source, ref int NextIndex, ref int line_ptr, out string expression, bool IsInFunction = false)
         {
-            //TODO: извлечь значение из функции и заменить заголовки результатом функции
             expression = "";
             var brackets = (IsInFunction) ? 1 : 0;
             for (var i = NextIndex; i < source.Length; i++)
@@ -129,6 +128,7 @@ namespace CEVirtualMachine
 
         static private string GetNextLiteral(string source, ref int NextIndex, ref int line_ptr)
         {
+            //DONE: Rework for functions
             var LiteralFinded = false;
             var Literal = "";
 
@@ -138,6 +138,11 @@ namespace CEVirtualMachine
                 {
                     LiteralFinded = true;
                     Literal += source[i];
+                    if(source[i] == '(')
+                    {
+                        NextIndex = i++;
+                        return Literal;
+                    }
                 }
                 else
                 if (LiteralFinded)

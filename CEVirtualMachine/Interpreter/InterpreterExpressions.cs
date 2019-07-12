@@ -13,7 +13,7 @@ namespace CEVirtualMachine
             var postfix_result = GetPostfixForm(expression, out postfix_form);
             if (postfix_result != null)
             {
-                result = new MemorySlot("NULL", null);
+                result = new MemorySlot("Unknown", null);
                 return postfix_result;
             }
 
@@ -61,7 +61,7 @@ namespace CEVirtualMachine
                             }
                             else
                             {
-                                result = new MemorySlot("NULL", null);
+                                result = new MemorySlot("Unknown", null);
                                 return "BAD_CAST";
                             }
                         }
@@ -76,156 +76,156 @@ namespace CEVirtualMachine
                                     case OperatorType.Add:
                                         Operand1 = Operand1 + Operand2;
                                         string var_type;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.And:
                                         Operand1 = Operand1 & Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Divide:
                                         Operand1 = Operand1 / Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Equal:
                                         Operand1 = Operand1 == Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.LeftShift:
                                         Operand1 = Operand1 << Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Less:
                                         Operand1 = Operand1 < Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.LessOrEqual:
                                         Operand1 = Operand1 <= Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.ModuleDivide:
                                         Operand1 = Operand1 % Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.More:
                                         Operand1 = Operand1 > Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.MoreOrEqual:
                                         Operand1 = Operand1 >= Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Multiply:
                                         Operand1 = Operand1 * Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.NotEqual:
                                         Operand1 = Operand1 != Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Or:
                                         Operand1 = Operand1 | Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.RightShift:
                                         Operand1 = Operand1 >> Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Substract:
                                         Operand1 = Operand1 - Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     case OperatorType.Xor:
                                         Operand1 = Operand1 ^ Operand2;
-                                        if (!GetVariableType(Operand1, out var_type))
+                                        if (!GetVariableTypeFromCSharp(Operand1, out var_type))
                                         {
-                                            result = new MemorySlot("NULL", null);
+                                            result = new MemorySlot("Unknown", null);
                                             return "BAD_TYPE";
                                         }
                                         OperandStack.Push(new MemorySlot(var_type, Operand1.ToString()));
                                         break;
                                     default:
-                                        result = new MemorySlot("NULL", null);
+                                        result = new MemorySlot("Unknown", null);
                                         return "BAD_OPERATOR";
                                 }
                             }
                             else
                             {
-                                result = new MemorySlot("NULL", null);
+                                result = new MemorySlot("Unknown", null);
                                 return "BAD_CAST";
                             }
                         }
@@ -234,26 +234,26 @@ namespace CEVirtualMachine
                     {
                         if (postfix_form[postfix_item].data == null)
                         {
-                            result = new MemorySlot("NULL", null);
+                            result = new MemorySlot("Unknown", null);
                             return "BAD_VARIABLE";
                         }
                         OperandStack.Push(postfix_form[postfix_item].data.Value);
                     }
                 }
             }
-            catch (InvalidCastException e)
+            catch (InvalidCastException)
             {
-                result = new MemorySlot("NULL", null);
+                result = new MemorySlot("Unknown", null);
                 return "BAD_TYPE";
             }
-            catch (Exception e)
+            catch
             {
-                result = new MemorySlot("NULL", null);
+                result = new MemorySlot("Unknown", null);
                 return "BAD_EXPRESSION";
             }
             if(OperandStack.Count != 1)
             {
-                result = new MemorySlot("NULL", null);
+                result = new MemorySlot("Unknown", null);
                 return "BAD_EXPRESSION";
             }
             result = OperandStack.Pop();
@@ -262,6 +262,7 @@ namespace CEVirtualMachine
 
         static private string GetPostfixForm(string expression, out List<ExpressionMember> result)
         {
+            //TODO: извлечь значение из функции и заменить заголовки результатом функции
             result = new List<ExpressionMember>();
             var operators = new Stack<OperatorType>();
 
@@ -298,10 +299,9 @@ namespace CEVirtualMachine
                         }
                         else
                         {
-                            string token_type;
-                            if (!GetLiteralType(token, out token_type))
-                                return "BAD_TYPE";
-                            result.Add(new ExpressionMember(OperatorType.None, new MemorySlot(token_type, token)));
+                            var res = AddValue(token, result);
+                            if (res != null)
+                                return res;
                             token = "";
                             IsOperator = false;
                             IsTokenFound = false;
@@ -375,10 +375,9 @@ namespace CEVirtualMachine
                         else
                         {
                             i--;
-                            string token_type;
-                            if (!GetLiteralType(token, out token_type))
-                                return "BAD_TYPE";
-                            result.Add(new ExpressionMember(OperatorType.None, new MemorySlot(token_type, token)));
+                            var res = AddValue(token, result);
+                            if (res != null)
+                                return res;
                             token = "";
                             IsOperator = false;
                             IsTokenFound = false;
@@ -399,16 +398,36 @@ namespace CEVirtualMachine
                     token += expression[i];
                 }
             }
-            string token_type_;
             if (token != "")
-                if (!GetLiteralType(token, out token_type_))
-                    return "BAD_TYPE";
-                else
-                    result.Add(new ExpressionMember(OperatorType.None, new MemorySlot(token_type_, token)));
+            {
+                var res = AddValue(token, result);
+                if (res != null)
+                    return res;
+            }
 
             while (operators.Count > 0)
                 result.Add(new ExpressionMember(operators.Pop(), null));
 
+            return null;
+        }
+
+        static private string AddValue(string Value, List<ExpressionMember> destination_list)
+        {
+            string token_type;
+            if (!GetLiteralType(Value, out token_type))
+            {
+                foreach(var block in OpenedBlocks)
+                {
+                    var vrb = block.variables.Find((variable) => variable.Name == Value);
+                    if(vrb != null)
+                    {
+                        destination_list.Add(new ExpressionMember(OperatorType.None, new MemorySlot(vrb.Data.DataType, vrb.Data.Data)));
+                        return null;
+                    }
+                }
+                return "BADNAME_VARIABLE";
+            }
+            destination_list.Add(new ExpressionMember(OperatorType.None, new MemorySlot(token_type, Value)));
             return null;
         }
 

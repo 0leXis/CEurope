@@ -44,7 +44,7 @@
     <Compile Include="Interpreter\Interpreter.cs" />
     <Compile Include="Interpreter\InterpreterConstants.cs" />
     <Compile Include="Interpreter\InterpreterExpressions.cs" />
-    <Compile Include="Interpreter\InterpreterKeyWordDefine.cs" />
+    <Compile Include="Interpreter\InterpreterLiteralDefine.cs" />
     <Compile Include="Interpreter\InterpreterLiteralFinding.cs" />
     <Compile Include="Interpreter\InterpreterTMP_FOR_UNIT_TESTS.cs" />
     <Compile Include="Interpreter\InterpreterTypes.cs" />

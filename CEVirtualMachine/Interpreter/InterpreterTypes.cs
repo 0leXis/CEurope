@@ -19,6 +19,32 @@ namespace CEVirtualMachine
                 this.Data = Data;
             }
 
+            public MemorySlot(string DataType)
+            {
+                this.DataType = DataType;
+                switch (DataType)
+                {
+                    case "Int":
+                    case "Long":
+                    case "Float":
+                    case "Double":
+                        Data = "0";
+                        break;
+                    case "Char":
+                        Data = "\0";
+                        break;
+                    case "String":
+                        Data = "";
+                        break;
+                    case "Boolean":
+                        Data = "false";
+                        break;
+                    default:
+                        Data = null;
+                        break;
+                }
+            }
+
             public bool GetRealTypeVariable(out dynamic RealData)
             {
                 switch (DataType)
@@ -44,14 +70,23 @@ namespace CEVirtualMachine
                     case "Boolean":
                         RealData = Convert.ToBoolean(Data);
                         break;
-                    case "NULL":
-                        RealData = null;
-                        break;
                     default:
                         RealData = null;
                         return false;
                 }
                 return true;
+            }
+        }
+
+        class Variable
+        {
+            public string Name;
+            public MemorySlot Data;
+
+            public Variable(string Name, MemorySlot Data)
+            {
+                this.Name = Name;
+                this.Data = Data;
             }
         }
 
@@ -96,11 +131,13 @@ namespace CEVirtualMachine
         {
             public int command_position;
             public BlockType type;
+            public List<Variable> variables;
 
             public Block(int command_position, BlockType type)
             {
                 this.command_position = command_position;
                 this.type = type;
+                variables = new List<Variable>();
             }
         }
 
