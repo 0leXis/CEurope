@@ -122,11 +122,6 @@ namespace CEurope
                 }
         }
 
-        private void FastColoredTextBox1_Pasting(object sender, TextChangingEventArgs e)
-        {
-            fastColoredTextBox1.DoAutoIndent();
-        }
-
         private void НалаштуванняToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             Program.OptionsForm.GetDataFromConfig();

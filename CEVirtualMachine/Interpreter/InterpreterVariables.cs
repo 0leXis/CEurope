@@ -122,10 +122,10 @@ namespace CEVirtualMachine
 
         static private bool CheckLiteralName(string Name)
         {
-            if (!KeyWords.Contains(Name) && char.IsLetter(Name[0]))
+            if (!KeyWords.Contains(Name) && (char.IsLetter(Name[0]) || Name[0] == '_'))
             {
                 for (var i = 1; i < Name.Length; i++)
-                    if (!char.IsLetterOrDigit(Name[0]))
+                    if (!char.IsLetterOrDigit(Name[i]) && Name[i] != '_')
                         return false;
             }
             else

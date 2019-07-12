@@ -372,7 +372,6 @@
             this.fastColoredTextBox1.TabIndex = 0;
             this.fastColoredTextBox1.Zoom = 100;
             this.fastColoredTextBox1.TextChanged += new System.EventHandler<FastColoredTextBoxNS.TextChangedEventArgs>(this.FastColoredTextBox1_TextChanged);
-            this.fastColoredTextBox1.Pasting += new System.EventHandler<FastColoredTextBoxNS.TextChangingEventArgs>(this.FastColoredTextBox1_Pasting);
             this.fastColoredTextBox1.AutoIndentNeeded += new System.EventHandler<FastColoredTextBoxNS.AutoIndentEventArgs>(this.FastColoredTextBox1_AutoIndentNeeded);
             // 
             // Form1
