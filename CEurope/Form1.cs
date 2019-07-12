@@ -147,6 +147,7 @@ namespace CEurope
                 tabControlScripts.TabPages.Add(tmp_filename.Substring(tmp_filename.LastIndexOf('\\') + 1));
                 tabControlScripts.SelectedIndex = tabControlScripts.TabCount - 1;
                 EnableCodeNeededButtons();
+                TabControlScripts_SelectedIndexChanged(sender, e);
             }
         }
 
@@ -227,6 +228,7 @@ namespace CEurope
             tabControlScripts.TabPages.Add("Безимянный");
             tabControlScripts.SelectedIndex = tabControlScripts.TabCount - 1;
             EnableCodeNeededButtons();
+            TabControlScripts_SelectedIndexChanged(sender, e);
         }
 
         private void ToolStripButtonNew_Click(object sender, EventArgs e)
