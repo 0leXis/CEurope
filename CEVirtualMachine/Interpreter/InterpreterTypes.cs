@@ -125,7 +125,7 @@ namespace CEVirtualMachine
             }
         }
 
-        enum BlockType { Unknown, Block, Program, NameSpace, DoUntil };
+        enum BlockType { Unknown, Block, Program, NameSpace, While, For, DoUntil, Switch, If, Else };
 
         struct Block
         {

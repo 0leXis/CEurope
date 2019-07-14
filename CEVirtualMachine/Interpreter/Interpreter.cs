@@ -27,10 +27,16 @@ namespace CEVirtualMachine
 
         static public bool Interpret(string script, StreamWriter OutFile = null)
         {
+            DefinedNamespaces = new Stack<string>();
+            OpenedNamespaces = new Stack<string>();
+            OpenedBlocks = new Stack<Block>();
+
             var NameSpaceDefined = false;
             var ProgramDefined = false;
             var WasProgramDefined = false;
             var WasNameSpaceDefined = false;
+            var DontSkipNextCommand = false;
+            int? SkipToIfElseBlock = null;
 
             var Commands = script.Split(';');
             var command_ptr = 0;
@@ -41,6 +47,73 @@ namespace CEVirtualMachine
                 while (NextIndex < Commands[command_ptr].Length)
                 {
                     var literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
+
+                    if (SkipToIfElseBlock != null)
+                    {
+                        if(!DontSkipNextCommand)
+                            while (((OpenedBlocks.Peek().type == BlockType.If && literal != "інакше") || OpenedBlocks.Peek().type == BlockType.Else) && SkipToIfElseBlock != OpenedBlocks.Count - 1)
+                               OpenedBlocks.Pop();
+                        if (!DontSkipNextCommand && SkipToIfElseBlock == OpenedBlocks.Count - 1)
+                        {
+                            SkipToIfElseBlock = null;
+                            OpenedBlocks.Pop();
+                            if (literal == "інакше")
+                                continue;
+                        }
+                        else
+                        {
+                            DontSkipNextCommand = false;
+                            switch (literal)
+                            {
+                                case "почати":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.Block));
+                                    break;
+                                case "якщо(":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.If));
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    DontSkipNextCommand = true;
+                                    break;
+                                case "поки(":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.While));
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    break;
+                                case "робити":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.DoUntil));
+                                    break;
+                                case "для(":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.For));
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    break;
+                                case "перемикач(":
+                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.Switch));
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    break;
+                                case "нераніше(":
+                                    OpenedBlocks.Pop();
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    break;
+                                case "інакше":
+                                    DontSkipNextCommand = true;
+                                    OpenedBlocks.Pop();
+                                    break;
+                                case "кінець":
+                                    OpenedBlocks.Pop();
+                                    break;
+                                default:
+                                    NextIndex = 0;
+                                    command_ptr++;
+                                    break;
+                            }
+                            continue;
+                        }
+                    }
+                    else
+                    if (!DontSkipNextCommand && OpenedBlocks.Count > 0)
+                        while ((OpenedBlocks.Peek().type == BlockType.If && literal != "інакше") || OpenedBlocks.Peek().type == BlockType.Else)
+                            OpenedBlocks.Pop();
+                    else
+                        DontSkipNextCommand = false;
+
                     if (!ProgramDefined && NameSpaceDefined)
                         switch (literal)
                         {
@@ -101,6 +174,17 @@ namespace CEVirtualMachine
                                     SendError(line_ptr, ErrorCodes[Result], OutFile);
                                     return false;
                                 }
+                            case "інакше":
+                                Result = ElseBlockAdd(command_ptr, ref SkipToIfElseBlock, ref DontSkipNextCommand);
+                                if (Result == null)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
+                                }
                             case "ПисатиРядок": //TODO: Вынести в отдельный модуль, когда доделаю procedures
                                 string WriteLiteral;
                                 var res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out WriteLiteral, false);
@@ -139,7 +223,23 @@ namespace CEVirtualMachine
                                 else
                                 if (indx > 0 && char.IsLetter(literal[0]))
                                 {
-                                    //TODO: FunctionsDoHere
+                                    switch (literal)
+                                    {
+                                        case "якщо(":
+                                            Result = IfBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipToIfElseBlock, ref DontSkipNextCommand);
+                                            if (Result == null)
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                                return false;
+                                            }
+                                        default:
+                                            //TODO: FunctionsDoHere
+                                            break;
+                                    }
                                 }
                                 else
                                 if(CheckLiteralName(literal))

@@ -7,8 +7,7 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
-        static List<MemorySlot> Memory = new List<MemorySlot>();
-        static List<string> Defines = new List<string>();
+        //static List<MemorySlot> Memory = new List<MemorySlot>();
         static Stack<string> DefinedNamespaces = new Stack<string>();
         static Stack<string> OpenedNamespaces = new Stack<string>();
         static Stack<Block> OpenedBlocks = new Stack<Block>();
@@ -23,9 +22,8 @@ namespace CEVirtualMachine
         {
             if (!CheckLiteralName(NameSpaceName))
                 return "BAD_LITERALNAME";
-            if (KeyWords.Contains(NameSpaceName) || Defines.Contains(NameSpaceName))
+            if (KeyWords.Contains(NameSpaceName) || OpenedNamespaces.Contains(NameSpaceName))
                 return "BAD_NAMESPACE";
-            Defines.Add(NameSpaceName);
             DefinedNamespaces.Push(NameSpaceName);
             OpenedBlocks.Push(new Block(command_ptr, BlockType.NameSpace));
             NameSpaceDefined = true;
@@ -74,6 +72,45 @@ namespace CEVirtualMachine
                 default:
                     return "BAD_BLOCK";
             }
+        }
+
+        static private string IfBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
+        {
+            string expression;
+            var res = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
+            if (!res)
+                return "BAD_EXPRESSION";
+            MemorySlot expression_result;
+            var Result = InterpretExpression(expression, out expression_result);
+            if (Result == null && expression_result.DataType == "Bool")
+            {
+                OpenedBlocks.Push(new Block(command_ptr, BlockType.If));
+                DontSkipNextCommand = true;
+                if (expression_result.Data == "true")
+                {
+                    return null;
+                }
+                else
+                if (expression_result.Data == "false")
+                {
+                    SkipTo = OpenedBlocks.Count - 1;
+                    return null;
+                }
+                return "BAD_VARIABLE";
+            }
+            else
+                return Result;
+        }
+
+        static private string ElseBlockAdd(int command_ptr, ref int? SkipTo, ref bool DontSkipNextCommand)
+        {
+            var Block = OpenedBlocks.Pop();
+            if(Block.type != BlockType.If)
+                return "NOTFOUND_IF";
+            OpenedBlocks.Push(new Block(command_ptr, BlockType.Else));
+            DontSkipNextCommand = true;
+            SkipTo = OpenedBlocks.Count - 1;
+            return null;
         }
 
         static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType)

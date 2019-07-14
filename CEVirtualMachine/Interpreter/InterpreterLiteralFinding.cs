@@ -22,6 +22,18 @@ namespace CEVirtualMachine
             return '\0';
         }
 
+        static private bool CheckNextSymbol(string source, int NextIndex, char SymbolToCompare)
+        {
+            for (var i = NextIndex; i < source.Length; i++)
+            {
+                if (!IgnoreCharacters.Contains(source[i]))
+                {
+                    return SymbolToCompare == source[i];
+                }
+            }
+            return false;
+        }
+
         static private bool GetNextExpression(string source, ref int NextIndex, ref int line_ptr, out string expression, bool IsInFunction = false)
         {
             expression = "";
@@ -38,14 +50,14 @@ namespace CEVirtualMachine
                 if (source[i] == ')')
                 {
                     brackets--;
-                    expression += source[i];
                     if (brackets < 0)
                         return false;
                     if (IsInFunction && brackets == 0)
                     {
-                        NextIndex = i;
+                        NextIndex = ++i;
                         return true;
                     }
+                    expression += source[i];
                 }
                 else
                 if (source[i] == ',')
@@ -128,7 +140,6 @@ namespace CEVirtualMachine
 
         static private string GetNextLiteral(string source, ref int NextIndex, ref int line_ptr)
         {
-            //DONE: Rework for functions
             var LiteralFinded = false;
             var Literal = "";
 
@@ -140,7 +151,7 @@ namespace CEVirtualMachine
                     Literal += source[i];
                     if(source[i] == '(')
                     {
-                        NextIndex = i++;
+                        NextIndex = ++i;
                         return Literal;
                     }
                 }
@@ -148,6 +159,8 @@ namespace CEVirtualMachine
                 if (LiteralFinded)
                 {
                     NextIndex = i++;
+                    if (CheckNextSymbol(source, NextIndex, '('))
+                        return Literal + GetNextSymbol(source, ref NextIndex, ref line_ptr);
                     return Literal;
                 }
                 if (source[i] == '\n')
