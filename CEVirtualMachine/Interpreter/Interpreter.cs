@@ -346,7 +346,6 @@ namespace CEVirtualMachine
                                 var Result = LoadNameSpace(command_ptr, ref NameSpaceDefined, literal);
                                 if (Result == null)
                                 {
-                                    WasNameSpaceDefined = true;
                                     continue;
                                 }
                                 else
@@ -359,6 +358,7 @@ namespace CEVirtualMachine
                                 Result = DefineNameSpace(command_ptr, NextIndex, ref line_ptr, ref NameSpaceDefined, literal);
                                 if (Result == null)
                                 {
+                                    WasNameSpaceDefined = true;
                                     continue;
                                 }
                                 else
