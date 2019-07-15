@@ -413,6 +413,11 @@ namespace CEVirtualMachine
 
         static private string AddValue(string Value, List<ExpressionMember> destination_list)
         {
+            //TODO: ReadLine в отдельную функцию
+            if(Value == "ЧитатиРядок")
+            {
+                Value = Console.ReadLine();
+            }
             string token_type;
             if (!GetLiteralType(Value, out token_type))
             {

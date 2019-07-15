@@ -97,6 +97,7 @@ namespace CEVirtualMachine
                     if (source[i] == '\n')
                         line_ptr++;
             }
+            NextIndex++;
             if (brackets > 0)
                 return false;
             else

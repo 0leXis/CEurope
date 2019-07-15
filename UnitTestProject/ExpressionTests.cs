@@ -67,6 +67,7 @@ namespace UnitTestProject
         [TestMethod]
         public void ExpressionTest5()
         {
+            //TODO: Check after function realization
             var sourcedata = "a+b*d+(-l) - ghs(sds+43*(f(x,y)))";
             int NextIndex = 0;
             int line_ptr = 0;
