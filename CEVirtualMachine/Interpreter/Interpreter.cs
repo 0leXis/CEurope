@@ -27,20 +27,10 @@ namespace CEVirtualMachine
 
         static public bool Interpret(string script, StreamWriter OutFile = null)
         {
-            DefinedNamespaces = new Stack<string>();
-            OpenedNamespaces = new Stack<string>();
-            OpenedBlocks = new Stack<Block>();
-
             var NameSpaceDefined = false;
             var ProgramDefined = false;
             var WasProgramDefined = false;
             var WasNameSpaceDefined = false;
-            var DontSkipNextCommand = false;
-<<<<<<< HEAD
-            int? SkipTo = null;
-=======
-            int? SkipToIfElseBlock = null;
->>>>>>> 55c335d... If and Else operator
 
             var Commands = script.Split(';');
             var command_ptr = 0;
@@ -51,165 +41,12 @@ namespace CEVirtualMachine
                 while (NextIndex < Commands[command_ptr].Length)
                 {
                     var literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-
-<<<<<<< HEAD
-                    if (SkipTo != null)
-                    {
-                        var NextBlock = OpenedBlocks.Peek();
-                        if (!DontSkipNextCommand)
-                            while (((NextBlock.type == BlockType.If && literal != "інакше") 
-                                || NextBlock.type == BlockType.Else
-                                || NextBlock.type == BlockType.While) && SkipTo != OpenedBlocks.Count - 1)
-                            {
-                                OpenedBlocks.Pop();
-                                NextBlock = OpenedBlocks.Peek();
-                            }
-                        if (!DontSkipNextCommand && SkipTo == OpenedBlocks.Count - 1)
-                        {
-                            SkipTo = null;
-                            OpenedBlocks.Pop();
-                            NextBlock = OpenedBlocks.Peek();
-                            if (NextBlock.type == BlockType.If && literal == "інакше")
-=======
-                    if (SkipToIfElseBlock != null)
-                    {
-                        if(!DontSkipNextCommand)
-                            while (((OpenedBlocks.Peek().type == BlockType.If && literal != "інакше") || OpenedBlocks.Peek().type == BlockType.Else) && SkipToIfElseBlock != OpenedBlocks.Count - 1)
-                               OpenedBlocks.Pop();
-                        if (!DontSkipNextCommand && SkipToIfElseBlock == OpenedBlocks.Count - 1)
-                        {
-                            SkipToIfElseBlock = null;
-                            OpenedBlocks.Pop();
-                            if (literal == "інакше")
->>>>>>> 55c335d... If and Else operator
-                                continue;
-                        }
-                        else
-                        {
-                            DontSkipNextCommand = false;
-                            switch (literal)
-                            {
-                                case "почати":
-<<<<<<< HEAD
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Block));
-                                    break;
-                                case "якщо(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.If));
-=======
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.Block));
-                                    break;
-                                case "якщо(":
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.If));
->>>>>>> 55c335d... If and Else operator
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    DontSkipNextCommand = true;
-                                    break;
-                                case "поки(":
-<<<<<<< HEAD
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.While));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    DontSkipNextCommand = true;
-                                    break;
-                                case "робити":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.DoUntil));
-                                    break;
-                                case "для(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.For));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
-                                case "перемикач(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Switch));
-=======
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.While));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
-                                case "робити":
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.DoUntil));
-                                    break;
-                                case "для(":
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.For));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
-                                case "перемикач(":
-                                    OpenedBlocks.Push(new Block(command_ptr, BlockType.Switch));
->>>>>>> 55c335d... If and Else operator
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
-                                case "нераніше(":
-                                    OpenedBlocks.Pop();
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
-                                case "інакше":
-                                    DontSkipNextCommand = true;
-                                    OpenedBlocks.Pop();
-                                    break;
-                                case "кінець":
-                                    OpenedBlocks.Pop();
-                                    break;
-                                default:
-                                    NextIndex = 0;
-                                    command_ptr++;
-                                    break;
-                            }
-                            continue;
-                        }
-                    }
-                    else
-                    if (!DontSkipNextCommand && OpenedBlocks.Count > 0)
-<<<<<<< HEAD
-                    {
-                        var NextBlock = OpenedBlocks.Peek();
-                        while (((NextBlock.type == BlockType.If && literal != "інакше")
-                            || NextBlock.type == BlockType.Else) && OpenedBlocks.Count > 0)
-                        {
-                            OpenedBlocks.Pop();
-                            NextBlock = OpenedBlocks.Peek();
-                        }
-                        var DoNextCommand = false;
-                        while (NextBlock.type == BlockType.While && OpenedBlocks.Count > 0)
-                        {
-                            var OldIndex = NextIndex;
-                            var OldCommand_ptr = command_ptr;
-                            NextIndex = NextBlock.NextIndex;
-                            command_ptr = NextBlock.command_ptr;
-
-                            bool while_result;
-                            var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Commands[command_ptr], out while_result);
-                            if (Result == null)
-                            {
-                                if (while_result)
-                                {
-                                    DontSkipNextCommand = true;
-                                    DoNextCommand = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    OpenedBlocks.Pop();
-                                }
-                            }
-                            else
-                            {
-                                SendError(line_ptr, ErrorCodes[Result], OutFile);
-                                return false;
-                            }
-                        }
-                        if (DoNextCommand)
-                            continue;
-                    }
-=======
-                        while ((OpenedBlocks.Peek().type == BlockType.If && literal != "інакше") || OpenedBlocks.Peek().type == BlockType.Else)
-                            OpenedBlocks.Pop();
->>>>>>> 55c335d... If and Else operator
-                    else
-                        DontSkipNextCommand = false;
-
                     if (!ProgramDefined && NameSpaceDefined)
                         switch (literal)
                         {
                             case "простірімен":
                                 literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-                                var Result = DefineNameSpace(command_ptr, NextIndex, ref NameSpaceDefined, literal);
+                                var Result = DefineNameSpace(command_ptr, ref NameSpaceDefined, literal);
                                 if(Result == null)
                                 {
                                     continue;
@@ -220,7 +57,7 @@ namespace CEVirtualMachine
                                     return false;
                                 }
                             case "програма":
-                                Result = DefineMain(command_ptr, NextIndex, ref ProgramDefined);
+                                Result = DefineMain(command_ptr, ref ProgramDefined);
                                 if (Result == null)
                                 {
                                     WasProgramDefined = true;
@@ -251,25 +88,10 @@ namespace CEVirtualMachine
                         switch (literal)
                         {
                             case "почати":
-                                BeginBlock(command_ptr, NextIndex);
+                                BeginBlock(command_ptr);
                                 continue;
                             case "кінець":
                                 var Result = EndBlock(ref NameSpaceDefined, ref ProgramDefined);
-                                if (Result == null)
-                                {
-                                    continue;
-                                }
-                                else
-                                {
-                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
-                                    return false;
-                                }
-                            case "інакше":
-<<<<<<< HEAD
-                                Result = ElseBlockAdd(command_ptr, NextIndex, ref SkipTo, ref DontSkipNextCommand);
-=======
-                                Result = ElseBlockAdd(command_ptr, ref SkipToIfElseBlock, ref DontSkipNextCommand);
->>>>>>> 55c335d... If and Else operator
                                 if (Result == null)
                                 {
                                     continue;
@@ -317,38 +139,7 @@ namespace CEVirtualMachine
                                 else
                                 if (indx > 0 && char.IsLetter(literal[0]))
                                 {
-                                    switch (literal)
-                                    {
-                                        case "якщо(":
-<<<<<<< HEAD
-                                            Result = IfBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipTo, ref DontSkipNextCommand);
-                                            if (Result == null)
-                                            {
-                                                continue;
-                                            }
-                                            else
-                                            {
-                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
-                                                return false;
-                                            }
-                                        case "поки(":
-                                            Result = WhileBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipTo, ref DontSkipNextCommand);
-=======
-                                            Result = IfBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipToIfElseBlock, ref DontSkipNextCommand);
->>>>>>> 55c335d... If and Else operator
-                                            if (Result == null)
-                                            {
-                                                continue;
-                                            }
-                                            else
-                                            {
-                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
-                                                return false;
-                                            }
-                                        default:
-                                            //TODO: FunctionsDoHere
-                                            break;
-                                    }
+                                    //TODO: FunctionsDoHere
                                 }
                                 else
                                 if(CheckLiteralName(literal))
@@ -402,7 +193,7 @@ namespace CEVirtualMachine
                                 }
                             case "простірімен":
                                 literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-                                Result = DefineNameSpace(command_ptr, NextIndex, ref NameSpaceDefined, literal);
+                                Result = DefineNameSpace(command_ptr, ref NameSpaceDefined, literal);
                                 if (Result == null)
                                 {
                                     continue;

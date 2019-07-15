@@ -7,7 +7,8 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
-        //static List<MemorySlot> Memory = new List<MemorySlot>();
+        static List<MemorySlot> Memory = new List<MemorySlot>();
+        static List<string> Defines = new List<string>();
         static Stack<string> DefinedNamespaces = new Stack<string>();
         static Stack<string> OpenedNamespaces = new Stack<string>();
         static Stack<Block> OpenedBlocks = new Stack<Block>();
@@ -18,32 +19,33 @@ namespace CEVirtualMachine
             return null;
         }
 
-        static private string DefineNameSpace(int command_ptr, int NextIndex, ref bool NameSpaceDefined, string NameSpaceName)
+        static private string DefineNameSpace(int command_ptr, ref bool NameSpaceDefined, string NameSpaceName)
         {
             if (!CheckLiteralName(NameSpaceName))
                 return "BAD_LITERALNAME";
-            if (KeyWords.Contains(NameSpaceName) || OpenedNamespaces.Contains(NameSpaceName))
+            if (KeyWords.Contains(NameSpaceName) || Defines.Contains(NameSpaceName))
                 return "BAD_NAMESPACE";
+            Defines.Add(NameSpaceName);
             DefinedNamespaces.Push(NameSpaceName);
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.NameSpace));
+            OpenedBlocks.Push(new Block(command_ptr, BlockType.NameSpace));
             NameSpaceDefined = true;
             return null;
         }
 
-        static private string DefineMain(int command_ptr, int NextIndex, ref bool ProgramDefined)
+        static private string DefineMain(int command_ptr, ref bool ProgramDefined)
         {
             if (ProgramDefined)
             {
                 return "DEFINED_PROGRAM";
             }
             ProgramDefined = true;
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Program));
+            OpenedBlocks.Push(new Block(command_ptr, BlockType.Program));
             return null;
         }
 
-        static private void BeginBlock(int command_ptr, int NextIndex)
+        static private void BeginBlock(int command_ptr)
         {
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Block));
+            OpenedBlocks.Push(new Block(command_ptr, BlockType.Block));
         }
 
         static private string EndBlock(ref bool NameSpaceDefined, ref bool ProgramDefined)
@@ -74,113 +76,6 @@ namespace CEVirtualMachine
             }
         }
 
-        static private string IfBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
-        {
-            string expression;
-            var res = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
-            if (!res)
-                return "BAD_EXPRESSION";
-            MemorySlot expression_result;
-            var Result = InterpretExpression(expression, out expression_result);
-<<<<<<< HEAD
-            if (Result == null)
-            {
-                if(expression_result.DataType != "Bool")
-                    return "BAD_TYPE";
-                OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.If));
-=======
-            if (Result == null && expression_result.DataType == "Bool")
-            {
-                OpenedBlocks.Push(new Block(command_ptr, BlockType.If));
->>>>>>> 55c335d... If and Else operator
-                DontSkipNextCommand = true;
-                if (expression_result.Data == "true")
-                {
-                    return null;
-                }
-                else
-                if (expression_result.Data == "false")
-                {
-                    SkipTo = OpenedBlocks.Count - 1;
-                    return null;
-                }
-                return "BAD_VARIABLE";
-            }
-            else
-                return Result;
-        }
-
-<<<<<<< HEAD
-        static private string ElseBlockAdd(int command_ptr, int NextIndex, ref int? SkipTo, ref bool DontSkipNextCommand)
-=======
-        static private string ElseBlockAdd(int command_ptr, ref int? SkipTo, ref bool DontSkipNextCommand)
->>>>>>> 55c335d... If and Else operator
-        {
-            var Block = OpenedBlocks.Pop();
-            if(Block.type != BlockType.If)
-                return "NOTFOUND_IF";
-<<<<<<< HEAD
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Else));
-=======
-            OpenedBlocks.Push(new Block(command_ptr, BlockType.Else));
->>>>>>> 55c335d... If and Else operator
-            DontSkipNextCommand = true;
-            SkipTo = OpenedBlocks.Count - 1;
-            return null;
-        }
-
-<<<<<<< HEAD
-        static private string WhileBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
-        {
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.While));
-            bool while_result;
-            var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Command, out while_result);
-            if (Result == null)
-            {
-                if(while_result)
-                {
-                    return null;
-                }
-                else
-                {
-                    DontSkipNextCommand = true;
-                    SkipTo = OpenedBlocks.Count - 1;
-                    return null;
-                }
-            }
-            else
-                return Result;
-        }
-
-        static private string GetWhileExpressionResult(ref int NextIndex, ref int line_ptr, string Command, out bool WhileResult)
-        {
-            WhileResult = false;
-            string expression;
-            var res = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
-            if (!res)
-                return "BAD_EXPRESSION";
-            MemorySlot expression_result;
-            var Result = InterpretExpression(expression, out expression_result);
-            if (Result == null)
-            {
-                if (expression_result.DataType != "Bool")
-                    return "BAD_TYPE";
-                if (expression_result.Data == "true")
-                {
-                    WhileResult = true;
-                    return null;
-                }
-                else
-                if (expression_result.Data == "false")
-                    return null;
-                return "BAD_VARIABLE";
-            }
-            else
-                return Result;
-        }
-
-=======
->>>>>>> 55c335d... If and Else operator
         static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType)
         {
             var VarName = GetNextLiteral(Command, ref NextIndex, ref line_ptr);
