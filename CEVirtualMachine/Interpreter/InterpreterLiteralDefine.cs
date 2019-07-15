@@ -82,17 +82,11 @@ namespace CEVirtualMachine
                 return "BAD_EXPRESSION";
             MemorySlot expression_result;
             var Result = InterpretExpression(expression, out expression_result);
-<<<<<<< HEAD
             if (Result == null)
             {
                 if(expression_result.DataType != "Bool")
                     return "BAD_TYPE";
                 OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.If));
-=======
-            if (Result == null && expression_result.DataType == "Bool")
-            {
-                OpenedBlocks.Push(new Block(command_ptr, BlockType.If));
->>>>>>> 55c335d... If and Else operator
                 DontSkipNextCommand = true;
                 if (expression_result.Data == "true")
                 {
@@ -110,26 +104,17 @@ namespace CEVirtualMachine
                 return Result;
         }
 
-<<<<<<< HEAD
         static private string ElseBlockAdd(int command_ptr, int NextIndex, ref int? SkipTo, ref bool DontSkipNextCommand)
-=======
-        static private string ElseBlockAdd(int command_ptr, ref int? SkipTo, ref bool DontSkipNextCommand)
->>>>>>> 55c335d... If and Else operator
         {
             var Block = OpenedBlocks.Pop();
             if(Block.type != BlockType.If)
                 return "NOTFOUND_IF";
-<<<<<<< HEAD
             OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Else));
-=======
-            OpenedBlocks.Push(new Block(command_ptr, BlockType.Else));
->>>>>>> 55c335d... If and Else operator
             DontSkipNextCommand = true;
             SkipTo = OpenedBlocks.Count - 1;
             return null;
         }
 
-<<<<<<< HEAD
         static private string WhileBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
         {
             OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.While));
@@ -179,8 +164,6 @@ namespace CEVirtualMachine
                 return Result;
         }
 
-=======
->>>>>>> 55c335d... If and Else operator
         static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType)
         {
             var VarName = GetNextLiteral(Command, ref NextIndex, ref line_ptr);
