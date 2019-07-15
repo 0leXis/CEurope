@@ -62,8 +62,8 @@ namespace CEVirtualMachine
                         if (!DontSkipNextCommand && SkipTo == OpenedBlocks.Count - 1)
                         {
                             SkipTo = null;
-                            OpenedBlocks.Pop();
                             NextBlock = OpenedBlocks.Peek();
+                            OpenedBlocks.Pop();
                             if (NextBlock.type == BlockType.If && literal == "інакше")
                                 continue;
                         }
@@ -73,27 +73,27 @@ namespace CEVirtualMachine
                             switch (literal)
                             {
                                 case "почати":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Block));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Block));
                                     break;
                                 case "якщо(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.If));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.If));
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
                                     DontSkipNextCommand = true;
                                     break;
                                 case "поки(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.While));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.While));
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
                                     DontSkipNextCommand = true;
                                     break;
                                 case "робити":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.DoUntil));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.DoUntil));
                                     break;
                                 case "для(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.For));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.For));
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
                                     break;
                                 case "перемикач(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Switch));
+                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Switch));
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
                                     break;
                                 case "нераніше(":
@@ -130,8 +130,10 @@ namespace CEVirtualMachine
                         {
                             var OldIndex = NextIndex;
                             var OldCommand_ptr = command_ptr;
+                            var OldLine_ptr = line_ptr;
                             NextIndex = NextBlock.NextIndex;
                             command_ptr = NextBlock.command_ptr;
+                            line_ptr = NextBlock.line_ptr;
 
                             bool while_result;
                             var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Commands[command_ptr], out while_result);
@@ -146,6 +148,9 @@ namespace CEVirtualMachine
                                 else
                                 {
                                     OpenedBlocks.Pop();
+                                    NextIndex = OldIndex;
+                                    command_ptr = OldCommand_ptr;
+                                    line_ptr = OldLine_ptr;
                                 }
                             }
                             else
@@ -153,6 +158,7 @@ namespace CEVirtualMachine
                                 SendError(line_ptr, ErrorCodes[Result], OutFile);
                                 return false;
                             }
+                            NextBlock = OpenedBlocks.Peek();
                         }
                         if (DoNextCommand)
                             continue;
@@ -165,7 +171,7 @@ namespace CEVirtualMachine
                         {
                             case "простірімен":
                                 literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-                                var Result = DefineNameSpace(command_ptr, NextIndex, ref NameSpaceDefined, literal);
+                                var Result = DefineNameSpace(command_ptr, NextIndex, ref line_ptr, ref NameSpaceDefined, literal);
                                 if(Result == null)
                                 {
                                     continue;
@@ -176,7 +182,7 @@ namespace CEVirtualMachine
                                     return false;
                                 }
                             case "програма":
-                                Result = DefineMain(command_ptr, NextIndex, ref ProgramDefined);
+                                Result = DefineMain(command_ptr, NextIndex, ref line_ptr, ref ProgramDefined);
                                 if (Result == null)
                                 {
                                     WasProgramDefined = true;
@@ -207,7 +213,7 @@ namespace CEVirtualMachine
                         switch (literal)
                         {
                             case "почати":
-                                BeginBlock(command_ptr, NextIndex);
+                                BeginBlock(command_ptr, NextIndex, ref line_ptr);
                                 continue;
                             case "кінець":
                                 var Result = EndBlock(ref NameSpaceDefined, ref ProgramDefined);
@@ -221,7 +227,7 @@ namespace CEVirtualMachine
                                     return false;
                                 }
                             case "інакше":
-                                Result = ElseBlockAdd(command_ptr, NextIndex, ref SkipTo, ref DontSkipNextCommand);
+                                Result = ElseBlockAdd(command_ptr, NextIndex, ref line_ptr, ref SkipTo, ref DontSkipNextCommand);
                                 if (Result == null)
                                 {
                                     continue;
@@ -350,7 +356,7 @@ namespace CEVirtualMachine
                                 }
                             case "простірімен":
                                 literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-                                Result = DefineNameSpace(command_ptr, NextIndex, ref NameSpaceDefined, literal);
+                                Result = DefineNameSpace(command_ptr, NextIndex, ref line_ptr, ref NameSpaceDefined, literal);
                                 if (Result == null)
                                 {
                                     continue;

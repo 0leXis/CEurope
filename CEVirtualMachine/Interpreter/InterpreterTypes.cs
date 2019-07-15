@@ -36,7 +36,7 @@ namespace CEVirtualMachine
                     case "String":
                         Data = "";
                         break;
-                    case "Boolean":
+                    case "Bool":
                         Data = "false";
                         break;
                     default:
@@ -67,7 +67,7 @@ namespace CEVirtualMachine
                     case "String":
                         RealData = Data;
                         break;
-                    case "Boolean":
+                    case "Bool":
                         RealData = Convert.ToBoolean(Data);
                         break;
                     default:
@@ -130,13 +130,15 @@ namespace CEVirtualMachine
         struct Block
         {
             public int command_ptr;
+            public int line_ptr;
             public int NextIndex;
             public BlockType type;
             public List<Variable> variables;
 
-            public Block(int command_ptr, int NextIndex, BlockType type)
+            public Block(int command_ptr, int NextIndex, int line_ptr, BlockType type)
             {
                 this.command_ptr = command_ptr;
+                this.line_ptr = line_ptr;
                 this.NextIndex = NextIndex;
                 this.type = type;
                 variables = new List<Variable>();

@@ -30,7 +30,7 @@ namespace CEVirtualMachine
                     type = "String";
                     break;
                 case "System.Boolean":
-                    type = "Boolean";
+                    type = "Bool";
                     break;
                 default:
                     type = "Unknown";
@@ -62,7 +62,7 @@ namespace CEVirtualMachine
                     type = "String";
                     break;
                 case "логічний":
-                    type = "Boolean";
+                    type = "Bool";
                     break;
                 default:
                     type = "Unknown";

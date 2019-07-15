@@ -18,32 +18,32 @@ namespace CEVirtualMachine
             return null;
         }
 
-        static private string DefineNameSpace(int command_ptr, int NextIndex, ref bool NameSpaceDefined, string NameSpaceName)
+        static private string DefineNameSpace(int command_ptr, int NextIndex, ref int line_ptr, ref bool NameSpaceDefined, string NameSpaceName)
         {
             if (!CheckLiteralName(NameSpaceName))
                 return "BAD_LITERALNAME";
             if (KeyWords.Contains(NameSpaceName) || OpenedNamespaces.Contains(NameSpaceName))
                 return "BAD_NAMESPACE";
             DefinedNamespaces.Push(NameSpaceName);
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.NameSpace));
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.NameSpace));
             NameSpaceDefined = true;
             return null;
         }
 
-        static private string DefineMain(int command_ptr, int NextIndex, ref bool ProgramDefined)
+        static private string DefineMain(int command_ptr, int NextIndex, ref int line_ptr, ref bool ProgramDefined)
         {
             if (ProgramDefined)
             {
                 return "DEFINED_PROGRAM";
             }
             ProgramDefined = true;
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Program));
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Program));
             return null;
         }
 
-        static private void BeginBlock(int command_ptr, int NextIndex)
+        static private void BeginBlock(int command_ptr, int NextIndex, ref int line_ptr)
         {
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Block));
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Block));
         }
 
         static private string EndBlock(ref bool NameSpaceDefined, ref bool ProgramDefined)
@@ -86,14 +86,14 @@ namespace CEVirtualMachine
             {
                 if(expression_result.DataType != "Bool")
                     return "BAD_TYPE";
-                OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.If));
+                OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.If));
                 DontSkipNextCommand = true;
-                if (expression_result.Data == "true")
+                if (expression_result.Data == "true" || expression_result.Data == "True")
                 {
                     return null;
                 }
                 else
-                if (expression_result.Data == "false")
+                if (expression_result.Data == "false" || expression_result.Data == "False")
                 {
                     SkipTo = OpenedBlocks.Count - 1;
                     return null;
@@ -104,12 +104,12 @@ namespace CEVirtualMachine
                 return Result;
         }
 
-        static private string ElseBlockAdd(int command_ptr, int NextIndex, ref int? SkipTo, ref bool DontSkipNextCommand)
+        static private string ElseBlockAdd(int command_ptr, int NextIndex, ref int line_ptr, ref int? SkipTo, ref bool DontSkipNextCommand)
         {
             var Block = OpenedBlocks.Pop();
             if(Block.type != BlockType.If)
                 return "NOTFOUND_IF";
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.Else));
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Else));
             DontSkipNextCommand = true;
             SkipTo = OpenedBlocks.Count - 1;
             return null;
@@ -117,18 +117,18 @@ namespace CEVirtualMachine
 
         static private string WhileBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
         {
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, BlockType.While));
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.While));
             bool while_result;
             var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Command, out while_result);
             if (Result == null)
             {
-                if(while_result)
+                DontSkipNextCommand = true;
+                if (while_result)
                 {
                     return null;
                 }
                 else
                 {
-                    DontSkipNextCommand = true;
                     SkipTo = OpenedBlocks.Count - 1;
                     return null;
                 }
@@ -150,13 +150,13 @@ namespace CEVirtualMachine
             {
                 if (expression_result.DataType != "Bool")
                     return "BAD_TYPE";
-                if (expression_result.Data == "true")
+                if (expression_result.Data == "true" || expression_result.Data == "True")
                 {
                     WhileResult = true;
                     return null;
                 }
                 else
-                if (expression_result.Data == "false")
+                if (expression_result.Data == "false" || expression_result.Data == "False")
                     return null;
                 return "BAD_VARIABLE";
             }
