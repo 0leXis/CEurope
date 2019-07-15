@@ -23,7 +23,8 @@ namespace CEVirtualMachine
             ["BAD_CAST"] = "Неприпустиме приведення типів в вираженні",
             ["BAD_VARIABLE"] = "Неприпустиме значення змінної",
             ["BADNAME_VARIABLE"] = "Змінної з таким ім'ям не існує",
-            ["BADINIT_VARIABLE"] = "Змінна, зазначена ключовим словом \"змінна\" не була инициализирована"
+            ["BADINIT_VARIABLE"] = "Змінна, зазначена ключовим словом \"змінна\" не була инициализирована",
+            ["NOTFOUND_IF"] = "IF_NOT_FOUND"
         };
 
         static readonly string[] KeyWords = new string[]
@@ -48,8 +49,6 @@ namespace CEVirtualMachine
         };
 
         static readonly char[] IgnoreCharacters = new char[] { ' ', '\t', '\n', '\r', '\v' };
-        static readonly string BlockBegin = "почати";
-        static readonly string BlockEnd = "кінець";
 
         static readonly string[] operators = new string[]
         {

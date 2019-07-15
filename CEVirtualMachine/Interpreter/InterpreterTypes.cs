@@ -125,17 +125,19 @@ namespace CEVirtualMachine
             }
         }
 
-        enum BlockType { Unknown, Block, Program, NameSpace, DoUntil };
+        enum BlockType { Unknown, Block, Program, NameSpace, While, For, DoUntil, Switch, If, Else };
 
         struct Block
         {
-            public int command_position;
+            public int command_ptr;
+            public int NextIndex;
             public BlockType type;
             public List<Variable> variables;
 
-            public Block(int command_position, BlockType type)
+            public Block(int command_ptr, int NextIndex, BlockType type)
             {
-                this.command_position = command_position;
+                this.command_ptr = command_ptr;
+                this.NextIndex = NextIndex;
                 this.type = type;
                 variables = new List<Variable>();
             }
