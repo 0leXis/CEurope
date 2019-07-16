@@ -126,71 +126,71 @@
             // створитиToolStripMenuItem
             // 
             this.створитиToolStripMenuItem.Name = "створитиToolStripMenuItem";
-            this.створитиToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.створитиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.створитиToolStripMenuItem.Text = "Створити";
             this.створитиToolStripMenuItem.Click += new System.EventHandler(this.СтворитиToolStripMenuItem_Click);
             // 
             // відкритиToolStripMenuItem
             // 
             this.відкритиToolStripMenuItem.Name = "відкритиToolStripMenuItem";
-            this.відкритиToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.відкритиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.відкритиToolStripMenuItem.Text = "Відкрити";
             this.відкритиToolStripMenuItem.Click += new System.EventHandler(this.ВідкритиToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // зберегтиToolStripMenuItem
             // 
             this.зберегтиToolStripMenuItem.Name = "зберегтиToolStripMenuItem";
-            this.зберегтиToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.зберегтиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.зберегтиToolStripMenuItem.Text = "Зберегти";
             this.зберегтиToolStripMenuItem.Click += new System.EventHandler(this.ЗберегтиToolStripMenuItem_Click);
             // 
             // зберегтиВсіToolStripMenuItem
             // 
             this.зберегтиВсіToolStripMenuItem.Name = "зберегтиВсіToolStripMenuItem";
-            this.зберегтиВсіToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.зберегтиВсіToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.зберегтиВсіToolStripMenuItem.Text = "Зберегти всі";
             this.зберегтиВсіToolStripMenuItem.Click += new System.EventHandler(this.ЗберегтиВсіToolStripMenuItem_Click);
             // 
             // зберегтиЯкToolStripMenuItem
             // 
             this.зберегтиЯкToolStripMenuItem.Name = "зберегтиЯкToolStripMenuItem";
-            this.зберегтиЯкToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.зберегтиЯкToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.зберегтиЯкToolStripMenuItem.Text = "Зберегти як...";
             this.зберегтиЯкToolStripMenuItem.Click += new System.EventHandler(this.ЗберегтиЯкToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // закритиToolStripMenuItem
             // 
             this.закритиToolStripMenuItem.Name = "закритиToolStripMenuItem";
-            this.закритиToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.закритиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.закритиToolStripMenuItem.Text = "Закрити";
             this.закритиToolStripMenuItem.Click += new System.EventHandler(this.ЗакритиToolStripMenuItem_Click);
             // 
             // закритиВсіToolStripMenuItem
             // 
             this.закритиВсіToolStripMenuItem.Name = "закритиВсіToolStripMenuItem";
-            this.закритиВсіToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.закритиВсіToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.закритиВсіToolStripMenuItem.Text = "Закрити всі";
             this.закритиВсіToolStripMenuItem.Click += new System.EventHandler(this.ЗакритиВсіToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // вихідToolStripMenuItem
             // 
             this.вихідToolStripMenuItem.Name = "вихідToolStripMenuItem";
-            this.вихідToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            this.вихідToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.вихідToolStripMenuItem.Text = "Вихід";
             this.вихідToolStripMenuItem.Click += new System.EventHandler(this.ВихідToolStripMenuItem_Click);
             // 
@@ -217,7 +217,7 @@
             // виконатиToolStripMenuItem
             // 
             this.виконатиToolStripMenuItem.Name = "виконатиToolStripMenuItem";
-            this.виконатиToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
+            this.виконатиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.виконатиToolStripMenuItem.Text = "Виконати";
             this.виконатиToolStripMenuItem.Click += new System.EventHandler(this.ВиконатиToolStripMenuItem_Click);
             // 
@@ -253,7 +253,7 @@
             this.toolStripButtonNew.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonNew.Name = "toolStripButtonNew";
             this.toolStripButtonNew.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonNew.Text = "toolStripButton1";
+            this.toolStripButtonNew.Text = "Створити";
             this.toolStripButtonNew.Click += new System.EventHandler(this.ToolStripButtonNew_Click);
             // 
             // toolStripButtonOpen
@@ -263,7 +263,7 @@
             this.toolStripButtonOpen.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOpen.Name = "toolStripButtonOpen";
             this.toolStripButtonOpen.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonOpen.Text = "toolStripButton2";
+            this.toolStripButtonOpen.Text = "Відкрити";
             this.toolStripButtonOpen.Click += new System.EventHandler(this.ToolStripButtonOpen_Click);
             // 
             // toolStripButton3
@@ -278,7 +278,7 @@
             this.toolStripButtonSave.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSave.Name = "toolStripButtonSave";
             this.toolStripButtonSave.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonSave.Text = "toolStripButton3";
+            this.toolStripButtonSave.Text = "Зберегти";
             this.toolStripButtonSave.Click += new System.EventHandler(this.ToolStripButtonSave_Click);
             // 
             // toolStripButtonSaveAll
@@ -288,7 +288,7 @@
             this.toolStripButtonSaveAll.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonSaveAll.Name = "toolStripButtonSaveAll";
             this.toolStripButtonSaveAll.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonSaveAll.Text = "toolStripButton4";
+            this.toolStripButtonSaveAll.Text = "Зберегти всі";
             // 
             // toolStripButton2
             // 
@@ -302,7 +302,7 @@
             this.toolStripButtonRun.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonRun.Name = "toolStripButtonRun";
             this.toolStripButtonRun.Size = new System.Drawing.Size(24, 24);
-            this.toolStripButtonRun.Text = "toolStripButton1";
+            this.toolStripButtonRun.Text = "Виконати";
             this.toolStripButtonRun.Click += new System.EventHandler(this.ToolStripButtonRun_Click);
             // 
             // tabControlScripts
@@ -361,7 +361,6 @@
             this.fastColoredTextBox1.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.fastColoredTextBox1.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
             this.fastColoredTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fastColoredTextBox1.Font = new System.Drawing.Font("Courier New", 9.75F);
             this.fastColoredTextBox1.IsReplaceMode = false;
             this.fastColoredTextBox1.Location = new System.Drawing.Point(0, 0);
             this.fastColoredTextBox1.Name = "fastColoredTextBox1";

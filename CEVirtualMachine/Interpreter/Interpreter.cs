@@ -27,6 +27,7 @@ namespace CEVirtualMachine
             var line_ptr = 1;
             for (command_ptr = 0; command_ptr < Commands.Length; command_ptr++)
             {
+                DontSkipNextCommand = false;
                 var NextIndex = 0;
                 while (NextIndex < Commands[command_ptr].Length)
                 {

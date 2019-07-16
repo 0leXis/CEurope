@@ -22,23 +22,8 @@ namespace CEurope
             InitializeComponent();
         }
 
-        public void RichTextBox_MouseWheel(object Sender, MouseEventArgs e)
-        {
-            var RealSender = Sender as FastColoredTextBox;
-            if (e.Delta > 0 && ModifierKeys == Keys.Control && RealSender.Font.Size < 72)
-            {
-                RealSender.Font = new Font("Courier New", RealSender.Font.Size + 1, FontStyle.Regular);
-            }
-            else
-            if (e.Delta < 0 && ModifierKeys == Keys.Control && RealSender.Font.Size > 5)
-            {
-                RealSender.Font = new Font("Courier New", RealSender.Font.Size - 1, FontStyle.Regular);
-            }
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            fastColoredTextBox1.MouseWheel += new MouseEventHandler(RichTextBox_MouseWheel);
             fastColoredTextBox1.Language = Language.Custom;
             fastColoredTextBox1.AutoIndent = true;
             fastColoredTextBox1.AutoIndentExistingLines = true;
