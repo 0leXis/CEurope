@@ -116,5 +116,38 @@ namespace CEVirtualMachine
             else
                 return Result;
         }
+
+        static private string Break(ref int? SkipTo, ref bool DontSkipNextCommand)
+        {
+            var BlockList = OpenedBlocks.ToList();
+            for (var i = 0; i < BlockList.Count; i++)
+            {
+                if (BlockList[i].type == BlockType.While || BlockList[i].type == BlockType.For || BlockList[i].type == BlockType.DoUntil)
+                {
+                    DontSkipNextCommand = false;
+                    SkipTo = BlockList.Count - i - 1;
+                    return null;
+                }
+            }
+            return "BAD_BREAK";
+        }
+
+        static private string Continue(ref int command_ptr, ref int NextIndex, ref int line_ptr, ref bool DontSkipNextCommand)
+        {
+            while(OpenedBlocks.Count > 0)
+            {
+                var NextBlock = OpenedBlocks.Peek();
+                if (NextBlock.type == BlockType.While || NextBlock.type == BlockType.For || NextBlock.type == BlockType.DoUntil)
+                {
+                    command_ptr = NextBlock.command_ptr;
+                    line_ptr = NextBlock.line_ptr;
+                    NextIndex = NextBlock.NextIndex;
+                    DontSkipNextCommand = false;
+                    return null;
+                }
+                OpenedBlocks.Pop();
+            }
+            return "BAD_CONTINUE";
+        }
     }
 }

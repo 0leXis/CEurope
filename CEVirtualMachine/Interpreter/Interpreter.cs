@@ -329,6 +329,28 @@ namespace CEVirtualMachine
                             case "робити":
                                 DoUntilBlockAdd(command_ptr, NextIndex, line_ptr);
                                 continue;
+                            case "перерву":
+                                Result = Break(ref SkipTo, ref DontSkipNextCommand);
+                                if (Result == null)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
+                                }
+                            case "продовжуй":
+                                Result = Continue(ref command_ptr, ref NextIndex, ref line_ptr, ref DontSkipNextCommand);
+                                if (Result == null)
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
+                                }
                             case "ПисатиРядок": //TODO: Вынести в отдельный модуль, когда доделаю procedures
                                 string WriteLiteral;
                                 var res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out WriteLiteral, false);

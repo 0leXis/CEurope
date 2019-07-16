@@ -24,7 +24,9 @@ namespace CEVirtualMachine
             ["BAD_VARIABLE"] = "Неприпустиме значення змінної",
             ["BADNAME_VARIABLE"] = "Змінної з таким ім'ям не існує",
             ["BADINIT_VARIABLE"] = "Змінна, зазначена ключовим словом \"змінна\" не була инициализирована",
-            ["NOTFOUND_IF"] = "IF_NOT_FOUND"
+            ["NOTFOUND_IF"] = "Виявлено \"інакше\" але не виявлено \"якщо\"",
+            ["BAD_CONTINUE"] = "Виявлено \"продовжуй\" але не виявлений блок циклу",
+            ["BAD_BREAK"] = "Виявлено \"перерву\" але не виявлений блок для виходу"
         };
 
         static readonly string[] KeyWords = new string[]
