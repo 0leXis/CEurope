@@ -115,56 +115,7 @@ namespace CEVirtualMachine
             return null;
         }
 
-        static private string WhileBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
-        {
-            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.While));
-            bool while_result;
-            var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Command, out while_result);
-            if (Result == null)
-            {
-                DontSkipNextCommand = true;
-                if (while_result)
-                {
-                    return null;
-                }
-                else
-                {
-                    SkipTo = OpenedBlocks.Count - 1;
-                    return null;
-                }
-            }
-            else
-                return Result;
-        }
-
-        static private string GetWhileExpressionResult(ref int NextIndex, ref int line_ptr, string Command, out bool WhileResult)
-        {
-            WhileResult = false;
-            string expression;
-            var res = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
-            if (!res)
-                return "BAD_EXPRESSION";
-            MemorySlot expression_result;
-            var Result = InterpretExpression(expression, out expression_result);
-            if (Result == null)
-            {
-                if (expression_result.DataType != "Bool")
-                    return "BAD_TYPE";
-                if (expression_result.Data == "true" || expression_result.Data == "True")
-                {
-                    WhileResult = true;
-                    return null;
-                }
-                else
-                if (expression_result.Data == "false" || expression_result.Data == "False")
-                    return null;
-                return "BAD_VARIABLE";
-            }
-            else
-                return Result;
-        }
-
-        static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType)
+        static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType, Block VarBlock, bool IsInFunction = false)
         {
             var VarName = GetNextLiteral(Command, ref NextIndex, ref line_ptr);
             if (!CheckLiteralName(VarName))
@@ -180,7 +131,7 @@ namespace CEVirtualMachine
             if (GetNextSymbol(Command, ref NextIndex, ref line_ptr) == '=')
             {
                 string expression;
-                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression);
+                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, IsInFunction);
                 if (!result)
                     return "BAD_EXPRESSION";
                 var res = InterpretExpression(expression, out variable_data);
@@ -193,7 +144,7 @@ namespace CEVirtualMachine
             {
                 if (IsInitialized)
                 {
-                    OpenedBlocks.Peek().variables.Add(new Variable(VarName, variable_data));
+                    VarBlock.variables.Add(new Variable(VarName, variable_data));
                 }
                 else
                     return "BADINIT_VAR";
@@ -204,25 +155,25 @@ namespace CEVirtualMachine
                 if (IsInitialized)
                 {
                     if (variable_data.DataType == RealType)
-                        OpenedBlocks.Peek().variables.Add(new Variable(VarName, variable_data));
+                        VarBlock.variables.Add(new Variable(VarName, variable_data));
                     else
                         return "BAD_TYPE";
                 }
                 else
-                    OpenedBlocks.Peek().variables.Add(new Variable(VarName, new MemorySlot(RealType)));
+                    VarBlock.variables.Add(new Variable(VarName, new MemorySlot(RealType)));
             }
             else
                 return "BAD_TYPE";
             return null;
         }
 
-        static private string UpdateVariable(ref int NextIndex, ref int line_ptr, string Command, Variable variable)
+        static private string UpdateVariable(ref int NextIndex, ref int line_ptr, string Command, Variable variable, bool IsFunc = false)
         {
             MemorySlot variable_data = new MemorySlot();
             if (GetNextSymbol(Command, ref NextIndex, ref line_ptr) == '=')
             {
                 string expression;
-                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression);
+                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, IsFunc);
                 if (!result)
                     return "BAD_EXPRESSION";
                 var res = InterpretExpression(expression, out variable_data);

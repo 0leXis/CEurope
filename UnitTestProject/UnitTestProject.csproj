@@ -55,6 +55,7 @@
     <Compile Include="PostfixTest.cs" />
     <Compile Include="ExpressionDoTests.cs" />
     <Compile Include="IfTest.cs" />
+    <Compile Include="WhileTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -64,7 +64,7 @@ namespace CEVirtualMachine
                 {
                     if (IsInFunction && brackets == 1)
                     {
-                        NextIndex = i++;
+                        NextIndex = ++i;
                         return true;
                     }
                     else
@@ -149,6 +149,11 @@ namespace CEVirtualMachine
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
                     LiteralFinded = true;
+                    if (source[i] == '=')
+                    {
+                        NextIndex = i;
+                        return Literal;
+                    }
                     Literal += source[i];
                     if(source[i] == '(')
                     {
@@ -169,6 +174,29 @@ namespace CEVirtualMachine
             }
             NextIndex = source.Length;
             return Literal;
+        }
+
+        static private string GetBoolFuncExpressionResult(string expression, out bool BoolResult)
+        {
+            BoolResult = false;
+            MemorySlot expression_result;
+            var Result = InterpretExpression(expression, out expression_result);
+            if (Result == null)
+            {
+                if (expression_result.DataType != "Bool")
+                    return "BAD_TYPE";
+                if (expression_result.Data == "true" || expression_result.Data == "True")
+                {
+                    BoolResult = true;
+                    return null;
+                }
+                else
+                if (expression_result.Data == "false" || expression_result.Data == "False")
+                    return null;
+                return "BAD_VARIABLE";
+            }
+            else
+                return Result;
         }
     }
 }

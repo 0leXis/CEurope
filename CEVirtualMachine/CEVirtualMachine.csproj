@@ -43,9 +43,11 @@
   <ItemGroup>
     <Compile Include="Interpreter\Interpreter.cs" />
     <Compile Include="Interpreter\InterpreterConstants.cs" />
+    <Compile Include="Interpreter\InterpreterCyclesDefine.cs" />
     <Compile Include="Interpreter\InterpreterExpressions.cs" />
     <Compile Include="Interpreter\InterpreterLiteralDefine.cs" />
     <Compile Include="Interpreter\InterpreterLiteralFinding.cs" />
+    <Compile Include="Interpreter\InterpreterLog.cs" />
     <Compile Include="Interpreter\InterpreterTMP_FOR_UNIT_TESTS.cs" />
     <Compile Include="Interpreter\InterpreterTypes.cs" />
     <Compile Include="Interpreter\InterpreterVariables.cs" />

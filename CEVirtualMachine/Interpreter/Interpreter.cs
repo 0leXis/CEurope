@@ -8,22 +8,6 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
-        static public void SendError(int line_ptr, string error_text, StreamWriter OutFile = null)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            if(OutFile == null)
-                Console.WriteLine("ПОМИЛКА: " + error_text + ". Рядок з командою: " + line_ptr);
-            else
-                OutFile.WriteLine("SERROR: ПОМИЛКА: " + error_text + ". Рядок з командою: " + line_ptr);
-        }
-
-        static public void SendInfo(string infotext, StreamWriter OutFile = null)
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            if (OutFile != null)
-                OutFile.WriteLine("SOUT: " + infotext);
-            Console.WriteLine(infotext);
-        }
 
         static public bool Interpret(string script, StreamWriter OutFile = null)
         {
@@ -54,7 +38,8 @@ namespace CEVirtualMachine
                         if (!DontSkipNextCommand)
                             while (((NextBlock.type == BlockType.If && literal != "інакше") 
                                 || NextBlock.type == BlockType.Else
-                                || NextBlock.type == BlockType.While) && SkipTo != OpenedBlocks.Count - 1)
+                                || NextBlock.type == BlockType.While
+                                || NextBlock.type == BlockType.For) && SkipTo != OpenedBlocks.Count - 1)
                             {
                                 OpenedBlocks.Pop();
                                 NextBlock = OpenedBlocks.Peek();
@@ -90,7 +75,11 @@ namespace CEVirtualMachine
                                     break;
                                 case "для(":
                                     OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.For));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                    string expression;
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out expression, true);
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out expression, true);
+                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out expression, true);
+                                    DontSkipNextCommand = true;
                                     break;
                                 case "перемикач(":
                                     OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Switch));
@@ -115,49 +104,149 @@ namespace CEVirtualMachine
                             continue;
                         }
                     }
-                    else
+
                     if (!DontSkipNextCommand && OpenedBlocks.Count > 0)
                     {
                         var NextBlock = OpenedBlocks.Peek();
-                        while (((NextBlock.type == BlockType.If && literal != "інакше")
-                            || NextBlock.type == BlockType.Else) && OpenedBlocks.Count > 0)
-                        {
-                            OpenedBlocks.Pop();
-                            NextBlock = OpenedBlocks.Peek();
-                        }
                         var DoNextCommand = false;
-                        while (NextBlock.type == BlockType.While && OpenedBlocks.Count > 0)
+                        var BlockFound = true;
+                        while (BlockFound && !DoNextCommand && OpenedBlocks.Count > 0)
                         {
-                            var OldIndex = NextIndex;
-                            var OldCommand_ptr = command_ptr;
-                            var OldLine_ptr = line_ptr;
-                            NextIndex = NextBlock.NextIndex;
-                            command_ptr = NextBlock.command_ptr;
-                            line_ptr = NextBlock.line_ptr;
-
-                            bool while_result;
-                            var Result = GetWhileExpressionResult(ref NextIndex, ref line_ptr, Commands[command_ptr], out while_result);
-                            if (Result == null)
+                            if ((NextBlock.type == BlockType.If && literal != "інакше")
+                            || NextBlock.type == BlockType.Else)
                             {
-                                if (while_result)
+                                OpenedBlocks.Pop();
+                            }
+                            else
+                            if (NextBlock.type == BlockType.While)
+                            {
+                                var OldIndex = NextIndex;
+                                var OldCommand_ptr = command_ptr;
+                                var OldLine_ptr = line_ptr;
+                                NextIndex = NextBlock.NextIndex;
+                                command_ptr = NextBlock.command_ptr;
+                                line_ptr = NextBlock.line_ptr;
+
+                                bool while_result;
+                                string expression;
+                                var res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out expression, true);
+                                if (!res)
                                 {
-                                    DontSkipNextCommand = true;
-                                    DoNextCommand = true;
-                                    break;
+                                    SendError(line_ptr, ErrorCodes["BAD_EXPRESSION"], OutFile);
+                                    return false;
+                                }
+                                var Result = GetBoolFuncExpressionResult(expression, out while_result);
+                                if (Result == null)
+                                {
+                                    if (while_result)
+                                    {
+                                        DontSkipNextCommand = true;
+                                        DoNextCommand = true;
+                                    }
+                                    else
+                                    {
+                                        OpenedBlocks.Pop();
+                                        NextIndex = OldIndex;
+                                        command_ptr = OldCommand_ptr;
+                                        line_ptr = OldLine_ptr;
+                                    }
                                 }
                                 else
                                 {
-                                    OpenedBlocks.Pop();
-                                    NextIndex = OldIndex;
-                                    command_ptr = OldCommand_ptr;
-                                    line_ptr = OldLine_ptr;
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
                                 }
                             }
                             else
+                            if(NextBlock.type == BlockType.For)
                             {
-                                SendError(line_ptr, ErrorCodes[Result], OutFile);
-                                return false;
+                                var OldIndex = NextIndex;
+                                var OldCommand_ptr = command_ptr;
+                                var OldLine_ptr = line_ptr;
+                                NextIndex = NextBlock.NextIndex;
+                                command_ptr = NextBlock.command_ptr;
+                                line_ptr = NextBlock.line_ptr;
+
+                                string continue_expression;
+                                if (!CheckNextSymbol(Commands[command_ptr], NextIndex, ','))
+                                {
+                                    var res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out continue_expression, true);
+                                    if (!res)
+                                    {
+                                        SendError(line_ptr, ErrorCodes["BAD_EXPRESSION"], OutFile);
+                                        return false;
+                                    }
+                                }
+                                else
+                                {
+                                    GetNextSymbol(Commands[command_ptr], ref NextIndex, ref line_ptr);
+                                    continue_expression = "true";
+                                }
+                                if (!CheckNextSymbol(Commands[command_ptr], NextIndex, ')'))
+                                {
+                                    var for_literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
+                                    if (CheckLiteralName(for_literal))
+                                    {
+                                        Variable vrb = null;
+                                        var IsVarFinded = false;
+                                        foreach (var block in OpenedBlocks)
+                                        {
+                                            vrb = block.variables.Find((variable) => variable.Name == for_literal);
+                                            if (vrb != null)
+                                            {
+                                                IsVarFinded = true;
+                                                break;
+                                            }
+                                        }
+                                        if (IsVarFinded)
+                                        {
+                                            var result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb, true);
+                                            if (result != null)
+                                            {
+                                                SendError(line_ptr, ErrorCodes[result], OutFile);
+                                                return false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            SendError(line_ptr, ErrorCodes["BADNAME_VARIABLE"], OutFile);
+                                            return false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        SendError(line_ptr, ErrorCodes["BAD_LITERAL"], OutFile);
+                                        return false;
+                                    }
+                                }
+                                else
+                                    GetNextSymbol(Commands[command_ptr], ref NextIndex, ref line_ptr);
+
+                                bool for_result;
+                                var Result = GetBoolFuncExpressionResult(continue_expression, out for_result);
+                                if (Result == null)
+                                {
+                                    if (for_result)
+                                    {
+                                        DontSkipNextCommand = true;
+                                        DoNextCommand = true;
+                                    }
+                                    else
+                                    {
+                                        OpenedBlocks.Pop();
+                                        NextIndex = OldIndex;
+                                        command_ptr = OldCommand_ptr;
+                                        line_ptr = OldLine_ptr;
+                                    }
+                                }
+                                else
+                                {
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
+                                }
                             }
+                            else
+                                BlockFound = false;
                             NextBlock = OpenedBlocks.Peek();
                         }
                         if (DoNextCommand)
@@ -261,7 +350,7 @@ namespace CEVirtualMachine
                                 var indx = literal.IndexOf('(');
                                 if(DataDefs.Contains(literal))
                                 {
-                                    Result = DefineVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], literal);
+                                    Result = DefineVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], literal, OpenedBlocks.Peek());
                                     if (Result == null)
                                     {
                                         continue;
@@ -290,6 +379,17 @@ namespace CEVirtualMachine
                                             }
                                         case "поки(":
                                             Result = WhileBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipTo, ref DontSkipNextCommand);
+                                            if (Result == null)
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                                return false;
+                                            }
+                                        case "для(":
+                                            Result = ForBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipTo, ref DontSkipNextCommand);
                                             if (Result == null)
                                             {
                                                 continue;
