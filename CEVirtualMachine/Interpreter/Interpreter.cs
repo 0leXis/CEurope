@@ -51,7 +51,10 @@ namespace CEVirtualMachine
                             NextBlock = OpenedBlocks.Peek();
                             OpenedBlocks.Pop();
                             if (NextBlock.type == BlockType.If && literal == "інакше")
+                            {
+                                DontSkipNextCommand = true;
                                 continue;
+                            }
                         }
                         else
                         {

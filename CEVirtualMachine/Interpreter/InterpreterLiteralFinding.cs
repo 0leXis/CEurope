@@ -11,7 +11,7 @@ namespace CEVirtualMachine
         {
             for (var i = NextIndex; i < source.Length; i++)
             {
-                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
                     while (++i < source.Length && source[i] != '\n');
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
@@ -28,7 +28,7 @@ namespace CEVirtualMachine
         {
             for (var i = NextIndex; i < source.Length; i++)
             {
-                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
                     while (++i < source.Length && source[i] != '\n');
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
@@ -44,7 +44,7 @@ namespace CEVirtualMachine
             var brackets = (IsInFunction) ? 1 : 0;
             for (var i = NextIndex; i < source.Length; i++)
             {
-                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
                     while (++i < source.Length && source[i] != '\n') ;
                 NextIndex++;
                 if (source[i] == '(')
@@ -152,7 +152,7 @@ namespace CEVirtualMachine
 
             for (var i = NextIndex; i < source.Length; i++)
             {
-                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
                     while (++i < source.Length && source[i] != '\n') ;
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
