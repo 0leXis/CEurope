@@ -72,8 +72,8 @@ namespace CEVirtualMachine
             [OperatorType.RightBracket] = MIN_PRIORITY,
             [OperatorType.None] = MIN_PRIORITY,
 
-            [OperatorType.Increment] = 0,
-            [OperatorType.Decrement] = 0,
+            //[OperatorType.Increment] = 0,
+            //[OperatorType.Decrement] = 0,
             [OperatorType.UnaryMinus] = 1,
             [OperatorType.UnaryPlus] = 1,
             [OperatorType.Not] = 1,

@@ -5,13 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using FastColoredTextBoxNS;
@@ -32,12 +25,12 @@ namespace CEurope
         public void RichTextBox_MouseWheel(object Sender, MouseEventArgs e)
         {
             var RealSender = Sender as FastColoredTextBox;
-            if (e.Delta > 0 && Control.ModifierKeys == Keys.Control && RealSender.Font.Size < 72)
+            if (e.Delta > 0 && ModifierKeys == Keys.Control && RealSender.Font.Size < 72)
             {
                 RealSender.Font = new Font("Courier New", RealSender.Font.Size + 1, FontStyle.Regular);
             }
             else
-            if (e.Delta < 0 && Control.ModifierKeys == Keys.Control && RealSender.Font.Size > 5)
+            if (e.Delta < 0 && ModifierKeys == Keys.Control && RealSender.Font.Size > 5)
             {
                 RealSender.Font = new Font("Courier New", RealSender.Font.Size - 1, FontStyle.Regular);
             }

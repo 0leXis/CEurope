@@ -28,8 +28,8 @@ namespace CEVirtualMachine
                 {
                     if (postfix_form[postfix_item].data == null)
                     {
-                        if (postfix_form[postfix_item].operation == OperatorType.Decrement || postfix_form[postfix_item].operation == OperatorType.Increment
-                            || postfix_form[postfix_item].operation == OperatorType.Not || postfix_form[postfix_item].operation == OperatorType.UnaryMinus
+                        if (//postfix_form[postfix_item].operation == OperatorType.Decrement || postfix_form[postfix_item].operation == OperatorType.Increment ||
+                            postfix_form[postfix_item].operation == OperatorType.Not || postfix_form[postfix_item].operation == OperatorType.UnaryMinus
                             || postfix_form[postfix_item].operation == OperatorType.UnaryPlus)
                         {
                             Operand1_ = OperandStack.Pop();
@@ -37,14 +37,14 @@ namespace CEVirtualMachine
                             {
                                 switch (postfix_form[postfix_item].operation)
                                 {
-                                    case OperatorType.Decrement:
-                                        Operand1--;
-                                        OperandStack.Push(new MemorySlot(Operand1_.DataType, Operand1.ToString()));
-                                        break;
-                                    case OperatorType.Increment:
-                                        Operand1++;
-                                        OperandStack.Push(new MemorySlot(Operand1_.DataType, Operand1.ToString()));
-                                        break;
+                                    //case OperatorType.Decrement:
+                                    //    Operand1--;
+                                    //    OperandStack.Push(new MemorySlot(Operand1_.DataType, Operand1.ToString()));
+                                    //    break;
+                                    //case OperatorType.Increment:
+                                    //    Operand1++;
+                                    //    OperandStack.Push(new MemorySlot(Operand1_.DataType, Operand1.ToString()));
+                                    //    break;
                                     case OperatorType.UnaryMinus:
                                         Operand1 = -Operand1;
                                         OperandStack.Push(new MemorySlot(Operand1_.DataType, Operand1.ToString()));
@@ -446,12 +446,12 @@ namespace CEVirtualMachine
                 case ")":
                     type = OperatorType.RightBracket;
                     break;
-                case "++":
-                    type = OperatorType.Increment;
-                    break;
-                case "--":
-                    type = OperatorType.Decrement;
-                    break;
+                //case "++":
+                //    type = OperatorType.Increment;
+                //    break;
+                //case "--":
+                //    type = OperatorType.Decrement;
+                //    break;
                 case "-":
                     if (pred_symbol == null || pred_symbol == '(')
                         type = OperatorType.UnaryMinus;

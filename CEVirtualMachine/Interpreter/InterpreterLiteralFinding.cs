@@ -11,6 +11,8 @@ namespace CEVirtualMachine
         {
             for (var i = NextIndex; i < source.Length; i++)
             {
+                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                    while (++i < source.Length && source[i] != '\n');
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
                     NextIndex = i + 1;
@@ -26,6 +28,8 @@ namespace CEVirtualMachine
         {
             for (var i = NextIndex; i < source.Length; i++)
             {
+                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                    while (++i < source.Length && source[i] != '\n');
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
                     return SymbolToCompare == source[i];
@@ -40,6 +44,8 @@ namespace CEVirtualMachine
             var brackets = (IsInFunction) ? 1 : 0;
             for (var i = NextIndex; i < source.Length; i++)
             {
+                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                    while (++i < source.Length && source[i] != '\n') ;
                 NextIndex++;
                 if (source[i] == '(')
                 {
@@ -146,6 +152,8 @@ namespace CEVirtualMachine
 
             for (var i = NextIndex; i < source.Length; i++)
             {
+                if (source[i] == '/' && ++i < source.Length && source[i] == '/')
+                    while (++i < source.Length && source[i] != '\n') ;
                 if (!IgnoreCharacters.Contains(source[i]))
                 {
                     LiteralFinded = true;

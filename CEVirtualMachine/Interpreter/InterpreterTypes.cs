@@ -93,7 +93,7 @@ namespace CEVirtualMachine
         enum OperatorType
         {
             None, LeftBracket, RightBracket, //100
-            Increment, Decrement,//0
+            //TODO: Increment, Decrement,//0
             UnaryMinus, UnaryPlus, Not,//1
             Multiply, Divide, ModuleDivide,//2
             Substract, Add,//3
