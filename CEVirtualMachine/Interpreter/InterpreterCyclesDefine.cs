@@ -8,6 +8,40 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
+        static private void DoUntilBlockAdd(int command_ptr, int NextIndex, int line_ptr)
+        {
+            OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.DoUntil));
+        }
+
+        static private string DoUntilBlockProcess(ref int command_ptr, ref int NextIndex, ref int line_ptr, string Command)
+        {
+            var DoUntilBlock = OpenedBlocks.Peek();
+            if (DoUntilBlock.type != BlockType.DoUntil)
+                return "BAD_BLOCK";
+            string expression;
+            var res = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
+            if (!res)
+                return "BAD_EXPRESSION";
+            bool until_result;
+            var Result = GetBoolFuncExpressionResult(expression, out until_result);
+            if (Result == null)
+            {
+                if (until_result)
+                {
+                    OpenedBlocks.Pop();
+                    return null;
+                }
+                else
+                {
+                    command_ptr = DoUntilBlock.command_ptr;
+                    NextIndex = DoUntilBlock.NextIndex;
+                    line_ptr = DoUntilBlock.line_ptr;
+                    return null;
+                }
+            }
+            else
+                return Result;
+        }
 
         static private string WhileBlockAdd(int command_ptr, ref int NextIndex, ref int line_ptr, string Command, ref int? SkipTo, ref bool DontSkipNextCommand)
         {

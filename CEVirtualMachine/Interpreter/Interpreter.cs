@@ -81,12 +81,12 @@ namespace CEVirtualMachine
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out expression, true);
                                     DontSkipNextCommand = true;
                                     break;
-                                case "перемикач(":
-                                    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Switch));
-                                    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
-                                    break;
+                                //case "перемикач(":
+                                //    OpenedBlocks.Push(new Block(command_ptr, NextIndex, line_ptr, BlockType.Switch));
+                                //    GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
+                                //    break;
                                 case "нераніше(":
-                                    OpenedBlocks.Pop();
+                                    var UntilBlock = OpenedBlocks.Pop();
                                     GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out literal, true);
                                     break;
                                 case "інакше":
@@ -326,6 +326,9 @@ namespace CEVirtualMachine
                                     SendError(line_ptr, ErrorCodes[Result], OutFile);
                                     return false;
                                 }
+                            case "робити":
+                                DoUntilBlockAdd(command_ptr, NextIndex, line_ptr);
+                                continue;
                             case "ПисатиРядок": //TODO: Вынести в отдельный модуль, когда доделаю procedures
                                 string WriteLiteral;
                                 var res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out WriteLiteral, false);
@@ -390,6 +393,17 @@ namespace CEVirtualMachine
                                             }
                                         case "для(":
                                             Result = ForBlockAdd(command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr], ref SkipTo, ref DontSkipNextCommand);
+                                            if (Result == null)
+                                            {
+                                                continue;
+                                            }
+                                            else
+                                            {
+                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                                return false;
+                                            }
+                                        case "нераніше(":
+                                            Result = DoUntilBlockProcess(ref command_ptr, ref NextIndex, ref line_ptr, Commands[command_ptr]);
                                             if (Result == null)
                                             {
                                                 continue;
