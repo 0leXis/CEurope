@@ -249,12 +249,15 @@ namespace CEurope
 
         private void ЗакритиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(tabControlScripts.TabCount == 1)
+            var Index = tabControlScripts.SelectedIndex;
+            if (tabControlScripts.TabCount == 1)
             {
                 DisableCodeNeededButtons();
             }
-            var Index = tabControlScripts.SelectedIndex;
-            tabControlScripts.TabPages.RemoveAt(tabControlScripts.SelectedIndex);
+            else
+                if (tabControlScripts.SelectedIndex == 0)
+                    tabControlScripts.SelectedIndex = 1;
+            tabControlScripts.TabPages.RemoveAt(Index);
             Scripts.RemoveAt(Index);
         }
 

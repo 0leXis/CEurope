@@ -39,6 +39,9 @@ namespace CEVirtualMachine
                     case "Bool":
                         Data = "false";
                         break;
+                    case "Table":
+                        Data = CreateTable().ToString();
+                        break;
                     default:
                         Data = null;
                         break;
@@ -70,6 +73,7 @@ namespace CEVirtualMachine
                     case "Bool":
                         RealData = Convert.ToBoolean(Data);
                         break;
+                    case "Table":
                     default:
                         RealData = null;
                         return false;
@@ -80,13 +84,51 @@ namespace CEVirtualMachine
 
         class Variable
         {
-            public string Name;
-            public MemorySlot Data;
+            public string Name { get; set; }
+            public MemorySlot Data { get; set; }
 
             public Variable(string Name, MemorySlot Data)
             {
                 this.Name = Name;
                 this.Data = Data;
+            }
+        }
+
+        class Table
+        {
+            //private string parent; TODO: Metatables
+
+            private Dictionary<string, MemorySlot> Values;
+
+            public Table()
+            {
+                Values = new Dictionary<string, MemorySlot>();
+            }
+
+            public void AddUpdateValue(string Key, MemorySlot Value)
+            {
+                MemorySlot tmp_value;
+                if (Values.TryGetValue(Key, out tmp_value))
+                {
+                    if (Value.Data == null)
+                        Values.Remove(Key);
+                    else
+                        Values[Key] = Value;
+                }
+                else
+                    if (Value.Data != null)
+                        Values.Add(Key, Value);
+            }
+
+            public MemorySlot GetValue(string Key)
+            {
+                MemorySlot tmp_value;
+                if (Values.TryGetValue(Key, out tmp_value))
+                {
+                    return tmp_value;
+                }
+                else
+                    return new MemorySlot("Unknown", null);
             }
         }
 

@@ -48,6 +48,7 @@
     <Compile Include="Interpreter\InterpreterLiteralDefine.cs" />
     <Compile Include="Interpreter\InterpreterLiteralFinding.cs" />
     <Compile Include="Interpreter\InterpreterLog.cs" />
+    <Compile Include="Interpreter\InterpreterTables.cs" />
     <Compile Include="Interpreter\InterpreterTMP_FOR_UNIT_TESTS.cs" />
     <Compile Include="Interpreter\InterpreterTypes.cs" />
     <Compile Include="Interpreter\InterpreterVariables.cs" />

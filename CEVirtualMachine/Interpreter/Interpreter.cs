@@ -189,13 +189,19 @@ namespace CEVirtualMachine
                                 if (!CheckNextSymbol(Commands[command_ptr], NextIndex, ')'))
                                 {
                                     var for_literal = GetNextLiteral(Commands[command_ptr], ref NextIndex, ref line_ptr);
-                                    if (CheckLiteralName(for_literal))
+                                    bool IsTable;
+                                    if (CheckVariableName(for_literal, out IsTable))
                                     {
+                                        var VarName = for_literal;
+                                        string LastPath = "";
+                                        if (IsTable)
+                                            VarName = GetNextTablePathElement(for_literal, out LastPath);
+
                                         Variable vrb = null;
                                         var IsVarFinded = false;
                                         foreach (var block in OpenedBlocks)
                                         {
-                                            vrb = block.variables.Find((variable) => variable.Name == for_literal);
+                                            vrb = block.variables.Find((variable) => variable.Name == VarName);
                                             if (vrb != null)
                                             {
                                                 IsVarFinded = true;
@@ -204,7 +210,11 @@ namespace CEVirtualMachine
                                         }
                                         if (IsVarFinded)
                                         {
-                                            var result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb, true);
+                                            string result;
+                                            if(IsTable)
+                                                result = UpdateVariableInTable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb, LastPath, true);
+                                            else
+                                                result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb, true);
                                             if (result != null)
                                             {
                                                 SendError(line_ptr, ErrorCodes[result], OutFile);
@@ -445,33 +455,44 @@ namespace CEVirtualMachine
                                     }
                                 }
                                 else
-                                if(CheckLiteralName(literal))
                                 {
-                                    Variable vrb = null;
-                                    var IsVarFinded = false;
-                                    foreach (var block in OpenedBlocks)
+                                    bool IsTable;
+                                    if (CheckVariableName(literal, out IsTable))
                                     {
-                                        vrb = block.variables.Find((variable) => variable.Name == literal);
-                                        if (vrb != null)
+                                        var VarName = literal;
+                                        string LastPath = "";
+                                        if (IsTable)
+                                            VarName = GetNextTablePathElement(literal, out LastPath);
+
+                                        Variable vrb = null;
+                                        var IsVarFinded = false;
+                                        foreach (var block in OpenedBlocks)
                                         {
-                                            IsVarFinded = true;
-                                            break;
+                                            vrb = block.variables.Find((variable) => variable.Name == VarName);
+                                            if (vrb != null)
+                                            {
+                                                IsVarFinded = true;
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if (IsVarFinded)
-                                    {
-                                        Result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb);
-                                        if (Result != null)
+                                        if (IsVarFinded)
                                         {
-                                            SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                            if(IsTable)
+                                                Result = UpdateVariableInTable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb, LastPath);
+                                            else
+                                                Result = UpdateVariable(ref NextIndex, ref line_ptr, Commands[command_ptr], vrb);
+                                            if (Result != null)
+                                            {
+                                                SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                                return false;
+                                            }
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            SendError(line_ptr, ErrorCodes["BADNAME_VARIABLE"], OutFile);
                                             return false;
                                         }
-                                        continue;
-                                    }
-                                    else
-                                    {
-                                        SendError(line_ptr, ErrorCodes["BADNAME_VARIABLE"], OutFile);
-                                        return false;
                                     }
                                 }
 

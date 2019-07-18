@@ -370,7 +370,26 @@ namespace CEVirtualMachine
                     {
                         if (!operator_tokens.Contains(expression[i]))
                         {
-                            token += expression[i];
+                            if (expression[i] == '[' || expression[i] == '.')
+                            {
+                                string tabletoken;
+                                var res = GetTableExpression(expression, ref i, out tabletoken);
+                                if (!res)
+                                    return "BAD_EXPRESSION";
+                                string variable = token;
+                                MemorySlot tmp_slot;
+                                var reslt = GetValueFromTable(token, tabletoken, out tmp_slot);
+                                if (reslt != null)
+                                    return reslt;
+
+                                i--;
+                                result.Add(new ExpressionMember(OperatorType.None, tmp_slot));
+                                token = "";
+                                IsOperator = false;
+                                IsTokenFound = false;
+                            }
+                            else
+                                token += expression[i];
                         }
                         else
                         {
@@ -409,6 +428,47 @@ namespace CEVirtualMachine
                 result.Add(new ExpressionMember(operators.Pop(), null));
 
             return null;
+        }
+
+        static private bool GetTableExpression(string source, ref int NextIndex, out string token)
+        {
+            var brackets = 0;
+            var IsStringFinding = false;
+            token = "";
+            for (var i = NextIndex; i < source.Length; i++)
+            {
+                if (IsStringFinding)
+                {
+                    if (source[i] == '\"')
+                        IsStringFinding = false;
+                    else
+                    {
+                        token += source[i];
+                        continue;
+                    }
+                }
+                else
+                if (source[i] == '\"')
+                    IsStringFinding = true;
+                if (source[i] == '\'')
+                {
+                    token += '\'' + source[++i];
+                    if (source[++i] != '\'')
+                        return false;
+                }
+                else
+                if (source[i] == '[')
+                    brackets++;
+                else
+                if (source[i] == ']')
+                    brackets--;
+                else
+                if (operator_tokens.Contains(source[i]) && brackets == 0)
+                    break;
+                token += source[i];
+                NextIndex++;
+            }
+            return true;
         }
 
         static private string AddValue(string Value, List<ExpressionMember> destination_list)

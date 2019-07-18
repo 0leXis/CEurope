@@ -67,7 +67,7 @@ namespace CEurope
             changed_range.ClearStyle(VarStyle);
             //Allow [ after and ; before operator
             changed_range.SetStyle(VarStyle, @"(?<=((^)|(\s|\t|\n|\r|\v|;)))(ціле|довгоціле|плавати" +
-                         @"|подвійний|рядок|знак|логічний)(?=((\s|\t|\n|\r|\v|\[)|($)))");
+                         @"|подвійний|рядок|знак|логічний|таблиця)(?=((\s|\t|\n|\r|\v|\[)|($)))");
             //Allow ; before operator
             changed_range.SetStyle(VarStyle, @"(?<=((^)|(\s|\t|\n|\r|\v|;)))(змінна)(?=((\s|\t|\n|\r|\v)|($)))");
 

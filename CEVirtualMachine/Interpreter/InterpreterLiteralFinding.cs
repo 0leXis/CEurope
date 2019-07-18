@@ -38,10 +38,12 @@ namespace CEVirtualMachine
             return false;
         }
 
-        static private bool GetNextExpression(string source, ref int NextIndex, ref int line_ptr, out string expression, bool IsInFunction = false)
+        static private bool GetNextExpression(string source, ref int NextIndex, ref int line_ptr, out string expression, bool IsRoundBracketsOpen = false, bool IsTableInit = false)
         {
+            if (IsTableInit)
+                IsRoundBracketsOpen = true;
             expression = "";
-            var brackets = (IsInFunction) ? 1 : 0;
+            var brackets = (IsRoundBracketsOpen) ? 1 : 0;
             for (var i = NextIndex; i < source.Length; i++)
             {
                 if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
@@ -58,7 +60,7 @@ namespace CEVirtualMachine
                     brackets--;
                     if (brackets < 0)
                         return false;
-                    if (IsInFunction && brackets == 0)
+                    if (IsRoundBracketsOpen && brackets == 0)
                     {
                         NextIndex = ++i;
                         return true;
@@ -66,9 +68,20 @@ namespace CEVirtualMachine
                     expression += source[i];
                 }
                 else
+                if (source[i] == '}')
+                {
+                    if (IsTableInit && brackets == 1)
+                    {
+                        NextIndex = i;
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+                else
                 if (source[i] == ',')
                 {
-                    if (IsInFunction && brackets == 1)
+                    if (IsRoundBracketsOpen && brackets == 1)
                     {
                         NextIndex = ++i;
                         return true;
@@ -89,13 +102,13 @@ namespace CEVirtualMachine
                 if (source[i] == '\"')
                 {
                     string Literal;
-                    if(!GetStringLiteral(source, ref i, ref line_ptr, out Literal))
+                    if (!GetStringLiteral(source, ref i, ref line_ptr, out Literal))
                         return false;
                     NextIndex = i;
                     expression += "\"" + Literal + "\"";
                 }
                 else
-                if(!IgnoreCharacters.Contains(source[i]))
+                if (!IgnoreCharacters.Contains(source[i]))
                 {
                     expression += source[i];
                 }
@@ -104,6 +117,76 @@ namespace CEVirtualMachine
                         line_ptr++;
             }
             NextIndex++;
+            if (brackets > 0)
+                return false;
+            else
+                return true;
+        }
+
+        static private bool GetExpressionFromString(string source, out string expression, bool IsRoundBracketsOpen = false, bool IsTableInit = false)
+        {
+            if (IsTableInit)
+                IsRoundBracketsOpen = true;
+            expression = "";
+            var brackets = (IsRoundBracketsOpen) ? 1 : 0;
+            for (var i = 0; i < source.Length; i++)
+            {
+                if (source[i] == '/' && i + 1 < source.Length && source[i + 1] == '/')
+                    while (++i < source.Length && source[i] != '\n') ;
+                if (source[i] == '(')
+                {
+                    brackets++;
+                    expression += source[i];
+                }
+                else
+                if (source[i] == ')')
+                {
+                    brackets--;
+                    if (brackets < 0)
+                        return false;
+                    if (IsRoundBracketsOpen && brackets == 0)
+                        return true;
+                    expression += source[i];
+                }
+                else
+                if (source[i] == '}')
+                {
+                    if (IsTableInit && brackets == 1)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                if (source[i] == ',')
+                {
+                    if (IsRoundBracketsOpen && brackets == 1)
+                        return true;
+                    else
+                        return false;
+                }
+                else
+                if (source[i] == '\'')
+                {
+                    if (i + 2 >= source.Length || source[i + 2] != '\'')
+                        return false;
+                    expression += "\'" + source[i + 1] + "\'";
+                    i += 2;
+                }
+                else
+                if (source[i] == '\"')
+                {
+                    string Literal;
+                    int line_ptr = 0;
+                    if (!GetStringLiteral(source, ref i, ref line_ptr, out Literal))
+                        return false;
+                    expression += "\"" + Literal + "\"";
+                }
+                else
+                if (!IgnoreCharacters.Contains(source[i]))
+                {
+                    expression += source[i];
+                }
+            }
             if (brackets > 0)
                 return false;
             else
@@ -167,6 +250,15 @@ namespace CEVirtualMachine
                     {
                         NextIndex = ++i;
                         return Literal;
+                    }
+                    if (source[i] == '[')
+                    {
+                        while(++i < source.Length && !IgnoreCharacters.Contains(source[i]))
+                        {
+                            Literal += source[i];
+                            if (source[i] == ']')
+                                break;
+                        }
                     }
                 }
                 else

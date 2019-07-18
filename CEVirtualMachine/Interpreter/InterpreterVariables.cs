@@ -7,6 +7,88 @@ namespace CEVirtualMachine
 {
     static partial class Interpreter
     {
+        static private string DefineVariable(ref int NextIndex, ref int line_ptr, string Command, string DataType, Block VarBlock, bool IsInFunction = false)
+        {
+            var VarName = GetNextLiteral(Command, ref NextIndex, ref line_ptr);
+            if (!CheckLiteralName(VarName))
+                return "BAD_LITERALNAME";
+            foreach (var block in OpenedBlocks)
+            {
+                if (block.variables.Find((variable) => variable.Name == VarName) != null)
+                    return "EXISTS_LITERALNAME";
+            }
+
+            bool IsInitialized = false;
+            MemorySlot variable_data = new MemorySlot();
+            if (GetNextSymbol(Command, ref NextIndex, ref line_ptr) == '=')
+            {
+                if (CheckNextSymbol(Command, NextIndex, '{'))
+                {
+                    variable_data = new MemorySlot("Table");
+                    var res = InitTable(ref NextIndex, ref line_ptr, Command, Convert.ToInt32(variable_data.Data));
+                    if (res != null)
+                        return res;
+                    IsInitialized = true;
+                }
+                else
+                {
+                    string expression;
+                    var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, IsInFunction);
+                    if (!result)
+                        return "BAD_EXPRESSION";
+                    var res = InterpretExpression(expression, out variable_data);
+                    if (res != null)
+                        return res;
+                    IsInitialized = true;
+                }
+            }
+            string RealType;
+            if (DataType == "змінна")
+            {
+                if (IsInitialized)
+                {
+                    VarBlock.variables.Add(new Variable(VarName, variable_data));
+                }
+                else
+                    return "BADINIT_VAR";
+            }
+            else
+            if (GetVariableTypeFromCEurope(DataType, out RealType))
+            {
+                if (IsInitialized)
+                {
+                    if (variable_data.DataType == RealType)
+                        VarBlock.variables.Add(new Variable(VarName, variable_data));
+                    else
+                        return "BAD_TYPE";
+                }
+                else
+                    VarBlock.variables.Add(new Variable(VarName, new MemorySlot(RealType)));
+            }
+            else
+                return "BAD_TYPE";
+            return null;
+        }
+
+        static private string UpdateVariable(ref int NextIndex, ref int line_ptr, string Command, Variable variable, bool IsFunc = false)
+        {
+            MemorySlot variable_data = new MemorySlot();
+            if (GetNextSymbol(Command, ref NextIndex, ref line_ptr) == '=')
+            {
+                string expression;
+                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, IsFunc);
+                if (!result)
+                    return "BAD_EXPRESSION";
+                var res = InterpretExpression(expression, out variable_data);
+                if (res != null)
+                    return res;
+                variable.Data = variable_data;
+                return null;
+            }
+            else
+                return "BAD_EXPRESSION";
+        }
+
         static private bool GetVariableTypeFromCSharp(dynamic variable, out string type)
         {
             switch (variable.GetType().ToString())
@@ -64,6 +146,9 @@ namespace CEVirtualMachine
                 case "логічний":
                     type = "Bool";
                     break;
+                case "таблиця":
+                    type = "Table";
+                    break;
                 default:
                     type = "Unknown";
                     return false;
@@ -116,6 +201,11 @@ namespace CEVirtualMachine
                 type = BasicTypes.Bool.ToString();
                 return true;
             }
+            if (literal == "null")
+            {
+                type = BasicTypes.Unknown.ToString();
+                return true;
+            }
             type = BasicTypes.Unknown.ToString();
             return false;
         }
@@ -123,6 +213,35 @@ namespace CEVirtualMachine
         static private bool CheckLiteralName(string Name)
         {
             if (!KeyWords.Contains(Name) && (char.IsLetter(Name[0]) || Name[0] == '_'))
+            {
+                for (var i = 1; i < Name.Length; i++)
+                    if (!char.IsLetterOrDigit(Name[i]) && Name[i] != '_')
+                        return false;
+            }
+            else
+                return false;
+            return true;
+        }
+
+        static private bool CheckVariableName(string Name, out bool IsTable)
+        {
+            IsTable = false;
+            if (Name.Contains('.') || Name.Contains('['))
+                IsTable = true;
+            if (!KeyWords.Contains(Name) && (char.IsLetter(Name[0]) || Name[0] == '_'))
+            {
+                for (var i = 1; i < Name.Length; i++)
+                    if (!char.IsLetterOrDigit(Name[i]) && !(Name[i] == '_' || Name[i] == '.' || Name[i] == '[' || Name[i] == ']'))
+                        return false;
+            }
+            else
+                return false;
+            return true;
+        }
+
+        static private bool CheckTableLiteralName(string Name)
+        {
+            if (!KeyWords.Contains(Name) && (char.IsLetterOrDigit(Name[0]) || Name[0] == '_'))
             {
                 for (var i = 1; i < Name.Length; i++)
                     if (!char.IsLetterOrDigit(Name[i]) && Name[i] != '_')
