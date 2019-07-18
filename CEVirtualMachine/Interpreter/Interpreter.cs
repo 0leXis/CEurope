@@ -377,6 +377,24 @@ namespace CEVirtualMachine
                                 Result = InterpretExpression(WriteLiteral, out expression_result);
                                 if (Result == null)
                                 {
+                                    SendInfoLine(expression_result.Data, OutFile);
+                                    continue;
+                                }
+                                else
+                                {
+                                    SendError(line_ptr, ErrorCodes[Result], OutFile);
+                                    return false;
+                                }
+                            case "Писати": //TODO: Вынести в отдельный модуль, когда доделаю procedures
+                                res = GetNextExpression(Commands[command_ptr], ref NextIndex, ref line_ptr, out WriteLiteral, false);
+                                if (!res)
+                                {
+                                    SendError(line_ptr, ErrorCodes["BAD_EXPRESSION"], OutFile);
+                                    return false;
+                                }
+                                Result = InterpretExpression(WriteLiteral, out expression_result);
+                                if (Result == null)
+                                {
                                     SendInfo(expression_result.Data, OutFile);
                                     continue;
                                 }

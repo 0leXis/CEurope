@@ -31,7 +31,7 @@ namespace CEurope
             //Comments
             range.ClearStyle(CommentsStyle);
             //Inline comment
-            changed_range.SetStyle(CommentsStyle, @"//.*");
+            range.SetStyle(CommentsStyle, @"//.*");
             //Block comment
             //range.SetStyle(CommentsStyle, @"(\{.*?\})|(\{.*)", RegexOptions.Singleline);
             //range.SetStyle(CommentsStyle, @"(\{.*?\})|(.*\})", RegexOptions.Singleline |

@@ -73,7 +73,7 @@ namespace CEVirtualMachine
             }
             else
             {
-                Interpreter.SendInfo("Виконую " + FileName, OutFile);
+                Interpreter.SendInfoLine("Виконую " + FileName, OutFile);
                 if (File.Exists(FileName))
                     using (var script_file = new StreamReader(FileName, Encoding.Default))
                     {
@@ -85,14 +85,14 @@ namespace CEVirtualMachine
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Interpreter.SendInfo("Файл не знайдено", OutFile);
+                    Interpreter.SendInfoLine("Файл не знайдено", OutFile);
                     Console.ReadKey();
                     return;
                 }
                 if (IsDiagnosticTime)
-                    Interpreter.SendInfo(string.Format("Програма завершена за {0} ...", watch.Elapsed), OutFile);
+                    Interpreter.SendInfoLine(string.Format("Програма завершена за {0} ...", watch.Elapsed), OutFile);
                 else
-                    Interpreter.SendInfo("Програма завершена...", OutFile);
+                    Interpreter.SendInfoLine("Програма завершена...", OutFile);
             }
             if (!IsRedirectOut)
                 Console.ReadKey();

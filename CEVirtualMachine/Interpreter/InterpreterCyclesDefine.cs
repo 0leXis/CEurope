@@ -100,18 +100,19 @@ namespace CEVirtualMachine
             if (Result == null)
             {
                 DontSkipNextCommand = true;
+                var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
                 if (for_result)
                 {
-                    var result = GetNextExpression(Command, ref NextIndex, ref line_ptr, out expression, true);
                     if (result)
                         return null;
-                    return "BAD_EXPRESSION";
                 }
                 else
                 {
                     SkipTo = OpenedBlocks.Count - 1;
-                    return null;
+                    if (result)
+                        return null;
                 }
+                return "BAD_EXPRESSION";
             }
             else
                 return Result;

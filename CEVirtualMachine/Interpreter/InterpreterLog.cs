@@ -17,12 +17,20 @@ namespace CEVirtualMachine
                 OutFile.WriteLine("SERROR: ПОМИЛКА: " + error_text + ". Рядок з командою: " + line_ptr);
         }
 
+        static public void SendInfoLine(string infotext, StreamWriter OutFile = null)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            if (OutFile != null)
+                OutFile.WriteLine(infotext);
+            Console.WriteLine(infotext);
+        }
+
         static public void SendInfo(string infotext, StreamWriter OutFile = null)
         {
             Console.ForegroundColor = ConsoleColor.White;
             if (OutFile != null)
-                OutFile.WriteLine("SOUT: " + infotext);
-            Console.WriteLine(infotext);
+                OutFile.Write(infotext);
+            Console.Write(infotext);
         }
     }
 }
