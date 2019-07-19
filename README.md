@@ -19,5 +19,6 @@ CEurope IDE - легкая среда разработки с подсветко
 
 ## Примеры и документация
 
-Документация расположена на [вики проекта](https://github.com/0leXis/CEurope/wiki)
+Описание языка и документация расположена на [вики проекта](https://github.com/0leXis/CEurope/wiki).
+
 Примеры расположены в папке [Samples](https://github.com/0leXis/CEurope/tree/master/Samples).
