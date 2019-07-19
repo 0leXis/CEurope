@@ -1,5 +1,5 @@
 # CEurope
-![I](https://img.shields.io/github/release/0leXis/CEurope.svg) ![II](https://img.shields.io/github/issues/0leXis/CEurope.svg) ![III](https://img.shields.io/github/downloads/0leXis/CEurope/total.svg) ![IIII](https://img.shields.io/github/license/0leXis/CEurope.svg)
+![I](https://img.shields.io/github/release/0leXis/CEurope.svg) ![II](https://img.shields.io/github/issues/0leXis/CEurope.svg) ![III](https://img.shields.io/github/downloads/0leXis/CEurope/total.svg) ![IIII](https://img.shields.io/github/license/0leXis/CEurope.svg?style=popout)
 > Внимание!!!
 > Данный язык был создан чуть больше, чем за 1 неделю. В связи с этим он может содержать огромное кол-во багов,
 > нечитаемый код и странные проектные решения. Автор не разбирается в создании компиляторов и интерпретаторов и
