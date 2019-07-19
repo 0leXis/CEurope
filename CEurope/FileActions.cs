@@ -11,11 +11,11 @@ namespace CEurope
     {
         static OpenFileDialog opendialog = new OpenFileDialog()
         {
-            Filter = "Файл з кодом CEurope (*.ua)| *.ua"
+            Filter = "Файл з кодом CEurope (*.ce)| *.ce"
         };
         static SaveFileDialog savedialog = new SaveFileDialog()
         {
-            Filter = "Файл з кодом CEurope (*.ua)|*.ua|Любий тип (*.*)|*.*",
+            Filter = "Файл з кодом CEurope (*.ce)|*.ce|Любий тип (*.*)|*.*",
             FilterIndex = 0
         };
 
