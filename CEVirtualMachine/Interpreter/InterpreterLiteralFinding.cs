@@ -253,11 +253,16 @@ namespace CEVirtualMachine
                     }
                     if (source[i] == '[')
                     {
-                        while(++i < source.Length && !IgnoreCharacters.Contains(source[i]))
+                        int brackets = 1;
+                        while(++i < source.Length)
                         {
                             Literal += source[i];
                             if (source[i] == ']')
+                                brackets--;
+                            if (brackets == 0)
                                 break;
+                            if (source[i] == '[')
+                                brackets++;
                         }
                     }
                 }

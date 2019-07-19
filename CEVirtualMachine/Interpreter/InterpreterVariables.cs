@@ -231,8 +231,22 @@ namespace CEVirtualMachine
             if (!KeyWords.Contains(Name) && (char.IsLetter(Name[0]) || Name[0] == '_'))
             {
                 for (var i = 1; i < Name.Length; i++)
-                    if (!char.IsLetterOrDigit(Name[i]) && !(Name[i] == '_' || Name[i] == '.' || Name[i] == '[' || Name[i] == ']'))
-                        return false;
+                    if (!char.IsLetterOrDigit(Name[i]) && !(Name[i] == '_' || Name[i] == '.'))
+                        if(Name[i] == '[')
+                        {
+                            int brackets = 1;
+                            while (++i < Name.Length)
+                            {
+                                if (Name[i] == ']')
+                                    brackets--;
+                                if (brackets == 0)
+                                    break;
+                                if (Name[i] == '[')
+                                    brackets++;
+                            }
+                        }
+                        else
+                            return false;
             }
             else
                 return false;

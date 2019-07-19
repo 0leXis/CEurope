@@ -370,7 +370,8 @@ namespace CEVirtualMachine
                     {
                         if (!operator_tokens.Contains(expression[i]))
                         {
-                            if (expression[i] == '[' || expression[i] == '.')
+                            int tmp_result;
+                            if (expression[i] == '[' || (expression[i] == '.' && !Int32.TryParse(token, out tmp_result)))
                             {
                                 string tabletoken;
                                 var res = GetTableExpression(expression, ref i, out tabletoken);
